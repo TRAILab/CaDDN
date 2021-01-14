@@ -132,8 +132,9 @@ Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usag
 
 ## Acknowledgement
 `CaDDN` is an open source project for monocular-based 3D scene perception, in addition to supporting multiple
-LiDAR-based perception models as shown above. Some parts of `PCDet` are learned from the official released codes of the above supported methods.
-We would like to thank for their proposed methods and the official implementation.
+LiDAR-based perception models as shown above. We would like to thank the authors of `OpenPCDet` for their open-source
+release of their 3D object detection codebase. Some parts of `PCDet` are learned from the official released codes of
+the above supported methods. We would like to thank for their proposed methods and the official implementation.
 
 We hope that this repo could serve as a strong and flexible codebase to benefit the research community by speeding up the process of reimplementing previous works and/or developing new methods.
 
