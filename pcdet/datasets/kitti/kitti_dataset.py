@@ -64,6 +64,22 @@ class KittiDataset(DatasetTemplate):
         assert lidar_file.exists()
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
 
+    def get_image(self, idx):
+        """
+        Loads image for a sample
+        Args:
+            idx [int]: Index of the image sample
+        Returns:
+            image [np.ndarray]: RGB Image
+        """
+        img_file = os.path.join(self.root_split_path, self.cam_folder, '%s.png' % idx)
+        assert os.path.exists(img_file)
+        image = skimage.io.imread(img_file)
+        image = image[:, :, :3]  # Remove alpha channel
+        image = image.astype(np.float32)
+        image /= 255.0
+        return image
+
     def get_image_shape(self, idx):
         img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
         assert img_file.exists()
@@ -73,6 +89,24 @@ class KittiDataset(DatasetTemplate):
         label_file = self.root_split_path / 'label_2' / ('%s.txt' % idx)
         assert label_file.exists()
         return object3d_kitti.get_objects_from_label(label_file)
+
+    def get_depth_map(self, idx, downsample_factor):
+        """
+        Loads depth map for a sample
+        Args:
+            idx [str]: Index of the sample
+            downsample_factor [int]: Downsample factor for the depth map
+        Returns:
+            depth [np.ndarray(H, W)]: Depth map
+        """
+        depth_file = os.path.join(self.root_split_path, self.depth_folder, '%s.png' % idx)
+        assert os.path.exists(depth_file)
+        depth = cv2.imread(depth_file, cv2.IMREAD_ANYDEPTH)
+        depth = depth.astype(np.float32)
+        depth /= 256.0
+        depth = skimage.transform.downscale_local_mean(image=depth,
+                                                       factors=(downsample_factor, downsample_factor))
+        return depth
 
     def get_calib(self, idx):
         calib_file = self.root_split_path / 'calib' / ('%s.txt' % idx)
@@ -241,6 +275,100 @@ class KittiDataset(DatasetTemplate):
 
         with open(db_info_save_path, 'wb') as f:
             pickle.dump(all_db_infos, f)
+
+    def __getitem__(self, index):
+        # index = 4
+        info = copy.deepcopy(self.infos[index])
+
+        sample_idx = info['point_cloud']['lidar_idx']
+        points = self.get_lidar(sample_idx)
+        calib = self.get_calib(sample_idx)
+        img_shape = info['image']['image_shape']
+
+        if cfg.DATA_CONFIG.FOV_POINTS_ONLY:
+            pts_rect = calib.lidar_to_rect(points[:, 0:3])
+            fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
+            points = points[fov_flag]
+
+        input_dict = {
+            'points': points,
+            'sample_idx': sample_idx,
+            'calib': calib,
+            'image_shape': img_shape
+        }
+
+        if 'annos' in info:
+            annos = info['annos']
+            annos = common_utils.drop_info_with_name(annos, name='DontCare')
+            loc, dims, rots = annos['location'], annos['dimensions'], annos['rotation_y']
+            gt_names = annos['name']
+            bbox = annos['bbox']
+            gt_boxes = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
+            if 'gt_boxes_lidar' in annos:
+                gt_boxes_lidar = annos['gt_boxes_lidar']
+            else:
+                gt_boxes_lidar = box_utils.boxes3d_camera_to_lidar(gt_boxes, calib)
+
+            input_dict.update({
+                'gt_boxes': gt_boxes,
+                'gt_names': gt_names,
+                'gt_box2d': bbox,
+                'gt_boxes_lidar': gt_boxes_lidar
+            })
+
+        example = self.prepare_data(input_dict=input_dict, has_label='annos' in info)
+        example = self.update_data(example=example, sample_idx=sample_idx)
+        if self.training and "IMAGE" in cfg.DATA_CONFIG.AUGMENTATION:
+            example = self.augment_data(example=example, aug_cfg=cfg.DATA_CONFIG.AUGMENTATION.IMAGE)
+        example['sample_idx'] = sample_idx
+        example['image_shape'] = img_shape
+        return example
+
+    def update_data(self, example, sample_idx):
+        """
+        Updates example with optional items
+        Args:
+            example [dict]: Data example returned by __getitem__
+            sample_idx [string]: Dataset sample index
+        Returns:
+            example [dict]: Updated data example returned by __getitem__
+        """
+        # Image
+        if "IMAGE" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.IMAGE.ENABLED:
+            example['image'] = self.get_image(sample_idx)
+
+        # 2D Detections
+        if "INCLUDE_2D_DETS" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.INCLUDE_2D_DETS:
+            example['det_boxes'] = self.get_det_boxes(sample_idx)
+
+        # Depth Map
+        if "DEPTH_MAP" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.DEPTH_MAP.ENABLED:
+            example['depth_map'] = self.get_depth_map(sample_idx,
+                                                      downsample_factor=cfg.DATA_CONFIG.DEPTH_MAP.DOWNSAMPLE_FACTOR)
+
+        # Depth Map
+        if "INCLUDE_CALIB_MATRICIES" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.INCLUDE_CALIB_MATRICIES:
+            calib = example["calib"]
+
+            # Convert calib matricies to homogenous format and combine
+            V2C = np.vstack((calib.V2C, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
+            R0 = np.hstack((calib.R0, np.zeros((3, 1), dtype=np.float32)))  # (3, 4)
+            R0 = np.vstack((R0, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
+            V2R = R0 @ V2C
+            example.update({
+                "trans_lidar_to_cam": V2R,
+                "trans_cam_to_img": calib.P2
+            })
+
+        # LiDAR Data
+        if "INCLUDE_LIDAR" in cfg.DATA_CONFIG and not cfg.DATA_CONFIG.INCLUDE_LIDAR:
+            example.pop("voxels")
+            example.pop("num_points")
+            example.pop("coordinates")
+            example.pop("voxel_centers")
+            example.pop("points")
+
+        return example
 
     @staticmethod
     def generate_prediction_dicts(batch_dict, pred_dicts, class_names, output_path=None):
