@@ -350,7 +350,7 @@ class KittiDataset(DatasetTemplate):
         if "INCLUDE_CALIB_MATRICIES" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.INCLUDE_CALIB_MATRICIES:
             calib = example["calib"]
 
-            # Convert calib matricies to homogenous format and combine
+            # Convert calibration matrices to homogeneous format and combine
             V2C = np.vstack((calib.V2C, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
             R0 = np.hstack((calib.R0, np.zeros((3, 1), dtype=np.float32)))  # (3, 4)
             R0 = np.vstack((R0, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
