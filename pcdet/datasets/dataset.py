@@ -162,7 +162,6 @@ class DatasetTemplate(torch_data.Dataset):
                 data_dict[key].append(val)
         batch_size = len(batch_list)
         ret = {}
-
         for key, val in data_dict.items():
             try:
                 if key in ['voxels', 'voxel_num_points']:
@@ -173,12 +172,58 @@ class DatasetTemplate(torch_data.Dataset):
                         coor_pad = np.pad(coor, ((0, 0), (1, 0)), mode='constant', constant_values=i)
                         coors.append(coor_pad)
                     ret[key] = np.concatenate(coors, axis=0)
-                elif key in ['gt_boxes']:
+                elif key in ['gt_boxes', 'gt_boxes_lidar']:
                     max_gt = max([len(x) for x in val])
                     batch_gt_boxes3d = np.zeros((batch_size, max_gt, val[0].shape[-1]), dtype=np.float32)
                     for k in range(batch_size):
                         batch_gt_boxes3d[k, :val[k].__len__(), :] = val[k]
                     ret[key] = batch_gt_boxes3d
+                elif key in ['gt_box2d']:
+                    max_boxes = 0
+                    max_boxes = max([len(x) for x in val])
+                    batch_boxes2d = np.zeros((batch_size, max_boxes, val[0].shape[-1]), dtype=np.float32)
+                    for k in range(batch_size):
+                        if val[k].size > 0:
+                            batch_boxes2d[k, :val[k].__len__(), :] = val[k]
+                    ret[key] = batch_boxes2d
+                elif key in ["image", "depth_map"]:
+                    # Get largest image size (H, W)
+                    max_h = 0
+                    max_w = 0
+                    for image in val:
+                        max_h = max(max_h, image.shape[0])
+                        max_w = max(max_w, image.shape[1])
+
+                    # Change size of images
+                    images = []
+                    for image in val:
+                        # if self.dataset_cfg.IMAGE.COLLATE.MODE == "Pad":
+                            pad_h = common_utils.get_pad_params(desired_size=max_h, cur_size=image.shape[0])
+                            pad_w = common_utils.get_pad_params(desired_size=max_w, cur_size=image.shape[1])
+                            pad_width = (pad_h, pad_w)
+
+                            if key == "image":
+                                image_pad = common_utils.pad_image(
+                                    image=image,
+                                    pad_width=pad_width,
+                                    constant_values=[0.485, 0.456, 0.406])#self.dataset_cfg.IMAGE.COLLATE.CONSTANT_VALUES)
+
+                            elif key == "depth_map":
+                                image_pad = np.pad(image,
+                                                   pad_width=pad_width,
+                                                   mode='constant',
+                                                   constant_values=0)
+                            images.append(image_pad)
+                        # elif self.dataset_cfg.IMAGE.COLLATE.MODE == "Resize":
+                        #     if image.shape[0:2] != (max_h, max_w):
+                        #         image_resize = cv2.resize(image, dsize=(max_w, max_h))
+                        #     else:
+                        #         image_resize = image
+
+                        #     images.append(image_resize)
+                        # else:
+                        #     raise NotImplementedError
+                    ret[key] = np.stack(images, axis=0)
                 else:
                     ret[key] = np.stack(val, axis=0)
             except:

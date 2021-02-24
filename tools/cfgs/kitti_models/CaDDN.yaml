@@ -49,6 +49,9 @@ DATA_CONFIG:
 
     IMAGE:
         ENABLED: True
+        COLLATE:
+            MODE: Pad
+            CONSTANT_VALUES: [0.485, 0.456, 0.406]
 
 MODEL:
     NAME: PointPillar
