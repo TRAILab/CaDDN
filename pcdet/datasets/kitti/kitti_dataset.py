@@ -276,54 +276,6 @@ class KittiDataset(DatasetTemplate):
         with open(db_info_save_path, 'wb') as f:
             pickle.dump(all_db_infos, f)
 
-    def __getitem__(self, index):
-        # index = 4
-        info = copy.deepcopy(self.infos[index])
-
-        sample_idx = info['point_cloud']['lidar_idx']
-        points = self.get_lidar(sample_idx)
-        calib = self.get_calib(sample_idx)
-        img_shape = info['image']['image_shape']
-
-        if cfg.DATA_CONFIG.FOV_POINTS_ONLY:
-            pts_rect = calib.lidar_to_rect(points[:, 0:3])
-            fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
-            points = points[fov_flag]
-
-        input_dict = {
-            'points': points,
-            'sample_idx': sample_idx,
-            'calib': calib,
-            'image_shape': img_shape
-        }
-
-        if 'annos' in info:
-            annos = info['annos']
-            annos = common_utils.drop_info_with_name(annos, name='DontCare')
-            loc, dims, rots = annos['location'], annos['dimensions'], annos['rotation_y']
-            gt_names = annos['name']
-            bbox = annos['bbox']
-            gt_boxes = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
-            if 'gt_boxes_lidar' in annos:
-                gt_boxes_lidar = annos['gt_boxes_lidar']
-            else:
-                gt_boxes_lidar = box_utils.boxes3d_camera_to_lidar(gt_boxes, calib)
-
-            input_dict.update({
-                'gt_boxes': gt_boxes,
-                'gt_names': gt_names,
-                'gt_box2d': bbox,
-                'gt_boxes_lidar': gt_boxes_lidar
-            })
-
-        example = self.prepare_data(input_dict=input_dict, has_label='annos' in info)
-        example = self.update_data(example=example, sample_idx=sample_idx)
-        if self.training and "IMAGE" in cfg.DATA_CONFIG.AUGMENTATION:
-            example = self.augment_data(example=example, aug_cfg=cfg.DATA_CONFIG.AUGMENTATION.IMAGE)
-        example['sample_idx'] = sample_idx
-        example['image_shape'] = img_shape
-        return example
-
     def update_data(self, example, sample_idx):
         """
         Updates example with optional items
@@ -466,7 +418,6 @@ class KittiDataset(DatasetTemplate):
         return len(self.kitti_infos)
 
     def __getitem__(self, index):
-        # index = 4
         if self._merge_all_iters_to_one_epoch:
             index = index % len(self.kitti_infos)
 
@@ -476,8 +427,8 @@ class KittiDataset(DatasetTemplate):
 
         points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
-
         img_shape = info['image']['image_shape']
+
         if self.dataset_cfg.FOV_POINTS_ONLY:
             pts_rect = calib.lidar_to_rect(points[:, 0:3])
             fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
@@ -487,6 +438,7 @@ class KittiDataset(DatasetTemplate):
             'points': points,
             'frame_id': sample_idx,
             'calib': calib,
+            'image_shape': img_shape
         }
 
         if 'annos' in info:
@@ -494,19 +446,27 @@ class KittiDataset(DatasetTemplate):
             annos = common_utils.drop_info_with_name(annos, name='DontCare')
             loc, dims, rots = annos['location'], annos['dimensions'], annos['rotation_y']
             gt_names = annos['name']
+            bbox = annos['bbox']
             gt_boxes_camera = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
-            gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
+            if 'gt_boxes_lidar' in annos:
+                gt_boxes_lidar = annos['gt_boxes_lidar']
+            else:
+                gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
 
             input_dict.update({
+                'gt_boxes': gt_boxes_camera,
                 'gt_names': gt_names,
-                'gt_boxes': gt_boxes_lidar
+                'gt_box2d': bbox,
+                'gt_boxes_lidar': gt_boxes_lidar
             })
+
             road_plane = self.get_road_plane(sample_idx)
             if road_plane is not None:
                 input_dict['road_plane'] = road_plane
 
         data_dict = self.prepare_data(data_dict=input_dict)
-
+        data_dict = self.update_data(example=data_dict, sample_idx=sample_idx)
+        data_dict['sample_idx'] = sample_idx
         data_dict['image_shape'] = img_shape
         return data_dict
 
