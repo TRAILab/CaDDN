@@ -1,13 +1,13 @@
 import copy
 import pickle
 
+import os
 import numpy as np
 from skimage import io
 
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
 from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from ..dataset import DatasetTemplate
-
 
 class KittiDataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
@@ -286,20 +286,20 @@ class KittiDataset(DatasetTemplate):
             example [dict]: Updated data example returned by __getitem__
         """
         # Image
-        if "IMAGE" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.IMAGE.ENABLED:
+        if "IMAGE" in self.dataset_cfg and self.dataset_cfg.IMAGE.ENABLED:
             example['image'] = self.get_image(sample_idx)
 
         # 2D Detections
-        if "INCLUDE_2D_DETS" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.INCLUDE_2D_DETS:
+        if "INCLUDE_2D_DETS" in self.dataset_cfg and self.dataset_cfg.INCLUDE_2D_DETS:
             example['det_boxes'] = self.get_det_boxes(sample_idx)
 
         # Depth Map
-        if "DEPTH_MAP" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.DEPTH_MAP.ENABLED:
+        if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
             example['depth_map'] = self.get_depth_map(sample_idx,
-                                                      downsample_factor=cfg.DATA_CONFIG.DEPTH_MAP.DOWNSAMPLE_FACTOR)
+                                                      downsample_factor=self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR)
 
         # Depth Map
-        if "INCLUDE_CALIB_MATRICIES" in cfg.DATA_CONFIG and cfg.DATA_CONFIG.INCLUDE_CALIB_MATRICIES:
+        if "INCLUDE_CALIB_MATRICIES" in self.dataset_cfg and self.dataset_cfg.INCLUDE_CALIB_MATRICIES:
             calib = example["calib"]
 
             # Convert calibration matrices to homogeneous format and combine
@@ -313,7 +313,7 @@ class KittiDataset(DatasetTemplate):
             })
 
         # LiDAR Data
-        if "INCLUDE_LIDAR" in cfg.DATA_CONFIG and not cfg.DATA_CONFIG.INCLUDE_LIDAR:
+        if "INCLUDE_LIDAR" in self.dataset_cfg and not self.dataset_cfg.INCLUDE_LIDAR:
             example.pop("voxels")
             example.pop("num_points")
             example.pop("coordinates")
