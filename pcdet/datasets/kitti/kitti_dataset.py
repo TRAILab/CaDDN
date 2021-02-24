@@ -466,7 +466,7 @@ class KittiDataset(DatasetTemplate):
 
         data_dict = self.prepare_data(data_dict=input_dict)
         data_dict = self.update_data(example=data_dict, sample_idx=sample_idx)
-        data_dict['sample_idx'] = sample_idx
+        data_dict['sample_idx'] = np.array(sample_idx, dtype=np.int32)
         data_dict['image_shape'] = img_shape
         return data_dict
 
