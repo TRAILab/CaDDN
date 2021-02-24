@@ -104,6 +104,46 @@ def set_random_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+def get_pad_params(desired_size, cur_size):
+    """
+    Get padding parameters for np.pad function
+    Args:
+        desired_size [int]: Desired padded output size
+        cur_size [int]: Current size. Should always be less than or equal to cur_size
+    Returns:
+        pad_params [tuple(int)]: Number of values padded to the edges (before, after)
+    """
+    assert desired_size >= cur_size
+
+    # Calculate amount to pad
+    diff = desired_size - cur_size
+    pad_params = (0, diff)
+
+    return pad_params
+
+
+def pad_image(image, pad_width, constant_values):
+    """
+    Pad image with different values per channel
+    Args:
+        image [np.ndarray(H, W, 3)]: Image
+        pad_width [tuple(tuple(int))]: Number of values padded to height and width
+                                       ((before_h, after_h), (before_w, after_h))
+        constant_values [list]: List of channel values to pad
+    Returns:
+        image_pad [np.ndarray(H+P_H, W+P_W, 3)]: Padded image
+    """
+    assert len(constant_values) == image.shape[-1]
+    image_pad = []
+    for i, value in enumerate(constant_values):
+        image_pad_i = np.pad(image[..., i],
+                             pad_width=pad_width,
+                             mode='constant',
+                             constant_values=value)
+        image_pad.append(image_pad_i)
+
+    image_pad = np.stack(image_pad, axis=-1)
+    return image_pad
 
 def keep_arrays_by_name(gt_names, used_classes):
     inds = [i for i, x in enumerate(gt_names) if x in used_classes]
