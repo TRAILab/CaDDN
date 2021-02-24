@@ -1,9 +1,9 @@
 import copy
 import pickle
 
-import os
 import numpy as np
 from skimage import io
+import skimage.transform
 
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
 from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
@@ -72,9 +72,9 @@ class KittiDataset(DatasetTemplate):
         Returns:
             image [np.ndarray]: RGB Image
         """
-        img_file = os.path.join(self.root_split_path, self.cam_folder, '%s.png' % idx)
-        assert os.path.exists(img_file)
-        image = skimage.io.imread(img_file)
+        img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
+        assert img_file.exists()
+        image = io.imread(img_file)
         image = image[:, :, :3]  # Remove alpha channel
         image = image.astype(np.float32)
         image /= 255.0
@@ -99,8 +99,8 @@ class KittiDataset(DatasetTemplate):
         Returns:
             depth [np.ndarray(H, W)]: Depth map
         """
-        depth_file = os.path.join(self.root_split_path, self.depth_folder, '%s.png' % idx)
-        assert os.path.exists(depth_file)
+        depth_file = self.root_split_path / 'depth_2' / ('%s.png' % idx)
+        assert depth_file.exists()
         depth = cv2.imread(depth_file, cv2.IMREAD_ANYDEPTH)
         depth = depth.astype(np.float32)
         depth /= 256.0
