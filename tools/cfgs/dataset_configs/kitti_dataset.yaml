@@ -1,5 +1,5 @@
 DATASET: 'KittiDataset'
-DATA_PATH: '../data/kitti'
+DATA_PATH: '/media/trail/datasets/kitti'
 
 POINT_CLOUD_RANGE: [0, -40, -3, 70.4, 40, 1]
 
@@ -9,8 +9,8 @@ DATA_SPLIT: {
 }
 
 INFO_PATH: {
-    'train': [kitti_infos_train.pkl],
-    'test': [kitti_infos_val.pkl],
+    'train': [/media/trail/datasets/kitti/kitti_infos_train.pkl],
+    'test': [/media/trail/datasets/kitti/kitti_infos_val.pkl],
 }
 
 FOV_POINTS_ONLY: True
