@@ -454,10 +454,10 @@ class KittiDataset(DatasetTemplate):
                 gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
 
             input_dict.update({
-                'gt_boxes': gt_boxes_camera,
+                'gt_boxes': gt_boxes_lidar, #gt_boxes_camera,
                 'gt_names': gt_names,
-                'gt_box2d': bbox,
-                'gt_boxes_lidar': gt_boxes_lidar
+                'gt_box2d': bbox
+#                'gt_boxes_lidar': gt_boxes_lidar
             })
 
             road_plane = self.get_road_plane(sample_idx)
