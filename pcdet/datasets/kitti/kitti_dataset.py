@@ -448,10 +448,7 @@ class KittiDataset(DatasetTemplate):
             gt_names = annos['name']
             bbox = annos['bbox']
             gt_boxes_camera = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
-            if 'gt_boxes_lidar' in annos:
-                gt_boxes_lidar = annos['gt_boxes_lidar']
-            else:
-                gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
+            gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
 
             input_dict.update({
                 'gt_names': gt_names,
@@ -465,7 +462,6 @@ class KittiDataset(DatasetTemplate):
 
         data_dict = self.prepare_data(data_dict=input_dict)
         data_dict = self.update_data(example=data_dict, sample_idx=sample_idx)
-        data_dict['sample_idx'] = np.array(sample_idx, dtype=np.int32)
         data_dict['image_shape'] = img_shape
         return data_dict
 

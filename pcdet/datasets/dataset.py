@@ -125,17 +125,16 @@ class DatasetTemplate(torch_data.Dataset):
                 }
             )
 
-        selected = common_utils.keep_arrays_by_name(data_dict['gt_names'], self.class_names)
-        data_dict['gt_names'] = data_dict['gt_names'][selected]
-        gt_classes = np.array([self.class_names.index(n) + 1 for n in data_dict['gt_names']], dtype=np.int32)
-        gt_classes = gt_classes.reshape(-1, 1).astype(np.float32)
-
         if data_dict.get('gt_boxes', None) is not None:
+            selected = common_utils.keep_arrays_by_name(data_dict['gt_names'], self.class_names)
+            data_dict['gt_names'] = data_dict['gt_names'][selected]
+            gt_classes = np.array([self.class_names.index(n) + 1 for n in data_dict['gt_names']], dtype=np.int32)
+            gt_classes = gt_classes.reshape(-1, 1).astype(np.float32)
+
             data_dict['gt_boxes'] = data_dict['gt_boxes'][selected]
             gt_boxes = np.concatenate((data_dict['gt_boxes'], gt_classes), axis=1)
             data_dict['gt_boxes'] = gt_boxes
 
-        if data_dict.get('gt_box2d', None) is not None:
             data_dict['gt_box2d'] = data_dict['gt_box2d'][selected]
             gt_boxes_2d = np.concatenate((data_dict['gt_box2d'], gt_classes), axis=1)
             data_dict['gt_box2d'] = gt_boxes_2d
