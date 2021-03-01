@@ -1,69 +1,56 @@
 CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
-DATA_CONFIG: 
+DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/kitti_dataset.yaml
-    POINT_CLOUD_RANGE: [0, -39.68, -3, 69.12, 39.68, 1]
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
-
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': False
-          }
-
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.16, 0.16, 4]
-          MAX_POINTS_PER_VOXEL: 32
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 16000,
-            'test': 40000
-          }
-    DATA_AUGMENTOR:
-        DISABLE_AUG_LIST: ['placeholder']
-        AUG_CONFIG_LIST:
-            - NAME: gt_sampling
-              USE_ROAD_PLANE: True
-              DB_INFO_PATH:
-                  - kitti_dbinfos_train.pkl
-              PREPARE: {
-                 filter_by_min_points: ['Car:5', 'Pedestrian:5', 'Cyclist:5'],
-                 filter_by_difficulty: [-1],
-              }
-
-              SAMPLE_GROUPS: ['Car:15','Pedestrian:15', 'Cyclist:15']
-              NUM_POINT_FEATURES: 4
-              DATABASE_WITH_FAKELIDAR: False
-              REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
-              LIMIT_WHOLE_SCENE: False
-
-            - NAME: random_world_flip
-              ALONG_AXIS_LIST: ['x']
-
-            - NAME: random_world_rotation
-              WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
-
-            - NAME: random_world_scaling
-              WORLD_SCALE_RANGE: [0.95, 1.05]
+    POINT_CLOUD_RANGE: [2, -30.08, -3.0, 46.8, 30.08, 1.0]
+    VOXEL_SIZE: [0.16, 0.16, 4]
 
 MODEL:
-    NAME: PointPillar
+    NAME: CaDDN
 
-    VFE:
-        NAME: PillarVFE
-        WITH_DISTANCE: False
-        USE_ABSLOTE_XYZ: True
-        USE_NORM: True
-        NUM_FILTERS: [64]
+    FFN:
+        NAME: FrustumFeatureNetwork
+        CLASS_NET:
+            NAME: DeepLabV3_ResNet101
+            ARGS: {
+                "feat_extract_layer": "layer1",
+                "pretrained_path": checkpoints/deeplabv3_resnet101.pth
+            }
+        CHANNEL_REDUCE:
+            ENABLED: True
+            ARGS: {
+                "in_channels": 256,
+                "out_channels": 64,
+                "kernel_size": 1,
+                "stride": 1,
+                "bias": False
+            }
+        DISCRETIZE: {
+            "mode": LID,
+            "num_bins": 80,
+            "depth_min": 2.0,
+            "depth_max": 46.8
+        }
 
-    MAP_TO_BEV:
-        NAME: PointPillarScatter
-        NUM_BEV_FEATURES: 64
+    F2V:
+        NAME: FrustumToVoxel
+        ARGS: {
+            "mode": "bilinear",
+            "padding_mode": "zeros"
+        }
+
+    VOXEL_COLLAPSE:
+        NAME: Conv2DCollapse
+        ARGS: {
+            "channels": 64,
+            "kernel_size": 1,
+            "stride": 1,
+            "bias": False
+        }
 
     BACKBONE_2D:
         NAME: BaseBEVBackbone
-        LAYER_NUMS: [3, 5, 5]
+        LAYER_NUMS: [10, 10, 10]
         LAYER_STRIDES: [2, 2, 2]
         NUM_FILTERS: [64, 128, 256]
         UPSAMPLE_STRIDES: [1, 2, 4]
