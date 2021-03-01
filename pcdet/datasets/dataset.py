@@ -196,32 +196,27 @@ class DatasetTemplate(torch_data.Dataset):
                     # Change size of images
                     images = []
                     for image in val:
-                        # if self.dataset_cfg.IMAGE.COLLATE.MODE == "Pad":
-                            pad_h = common_utils.get_pad_params(desired_size=max_h, cur_size=image.shape[0])
-                            pad_w = common_utils.get_pad_params(desired_size=max_w, cur_size=image.shape[1])
-                            pad_width = (pad_h, pad_w)
+                        pad_h = common_utils.get_pad_params(desired_size=max_h, cur_size=image.shape[0])
+                        pad_w = common_utils.get_pad_params(desired_size=max_w, cur_size=image.shape[1])
+                        pad_width = (pad_h, pad_w)
 
-                            if key == "image":
-                                image_pad = common_utils.pad_image(
-                                    image=image,
-                                    pad_width=pad_width,
-                                    constant_values=[0.485, 0.456, 0.406])#self.dataset_cfg.IMAGE.COLLATE.CONSTANT_VALUES)
-
-                            elif key == "depth_map":
-                                image_pad = np.pad(image,
-                                                   pad_width=pad_width,
-                                                   mode='constant',
-                                                   constant_values=0)
-                            images.append(image_pad)
-                        # elif self.dataset_cfg.IMAGE.COLLATE.MODE == "Resize":
-                        #     if image.shape[0:2] != (max_h, max_w):
-                        #         image_resize = cv2.resize(image, dsize=(max_w, max_h))
-                        #     else:
-                        #         image_resize = image
-
-                        #     images.append(image_resize)
-                        # else:
-                        #     raise NotImplementedError
+                        if key == "image":
+                            # Constant RGB values to pad images with
+                            pad_values=[0, 0, 0]
+                            assert len(pad_values) == image.shape[-1]
+                            image_pad = []
+                            for i, value in enumerate(pad_values):
+                                image_pad_i = np.pad(image[..., i],
+                                                     pad_width=pad_width,
+                                                     mode='constant',
+                                                     constant_values=value)
+                                image_pad.append(image_pad_i)
+                        elif key == "depth_map":
+                            image_pad = np.pad(image,
+                                               pad_width=pad_width,
+                                               mode='constant',
+                                               constant_values=0)
+                        images.append(image_pad)
                     ret[key] = np.stack(images, axis=0)
                 else:
                     ret[key] = np.stack(val, axis=0)

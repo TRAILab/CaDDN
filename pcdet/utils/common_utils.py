@@ -121,30 +121,6 @@ def get_pad_params(desired_size, cur_size):
 
     return pad_params
 
-
-def pad_image(image, pad_width, constant_values):
-    """
-    Pad image with different values per channel
-    Args:
-        image [np.ndarray(H, W, 3)]: Image
-        pad_width [tuple(tuple(int))]: Number of values padded to height and width
-                                       ((before_h, after_h), (before_w, after_h))
-        constant_values [list]: List of channel values to pad
-    Returns:
-        image_pad [np.ndarray(H+P_H, W+P_W, 3)]: Padded image
-    """
-    assert len(constant_values) == image.shape[-1]
-    image_pad = []
-    for i, value in enumerate(constant_values):
-        image_pad_i = np.pad(image[..., i],
-                             pad_width=pad_width,
-                             mode='constant',
-                             constant_values=value)
-        image_pad.append(image_pad_i)
-
-    image_pad = np.stack(image_pad, axis=-1)
-    return image_pad
-
 def keep_arrays_by_name(gt_names, used_classes):
     inds = [i for i, x in enumerate(gt_names) if x in used_classes]
     inds = np.array(inds, dtype=np.int64)
