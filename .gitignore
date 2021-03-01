@@ -8,8 +8,9 @@ venv/
 *.idea/
 *.so
 *.yaml
-*.sh 
+*.sh
 *.pth
 *.pkl
 *.zip
 *.bin
+version.py
