@@ -204,18 +204,19 @@ class DatasetTemplate(torch_data.Dataset):
                             # Constant RGB values to pad images with
                             pad_values=[0, 0, 0]
                             assert len(pad_values) == image.shape[-1]
-                            image_pad = []
-                            for i, value in enumerate(pad_values):
-                                image_pad_i = np.pad(image[..., i],
-                                                     pad_width=pad_width,
-                                                     mode='constant',
-                                                     constant_values=value)
-                                image_pad.append(image_pad_i)
+
                         elif key == "depth_map":
-                            image_pad = np.pad(image,
-                                               pad_width=pad_width,
-                                               mode='constant',
-                                               constant_values=0)
+                            pad_values=[0]
+                            assert len(pad_values) == image.shape[-1]
+
+                        image_pad = []
+                        for i, value in enumerate(pad_values):
+                            image_pad_i = np.pad(image[..., i],
+                                                 pad_width=pad_width,
+                                                 mode='constant',
+                                                 constant_values=value)
+                            image_pad.append(image_pad_i)
+
                         images.append(image_pad)
                     ret[key] = np.stack(images, axis=0)
                 else:
