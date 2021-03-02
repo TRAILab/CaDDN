@@ -18,7 +18,7 @@ FOV_POINTS_ONLY: True
 
 DATA_AUGMENTOR:
     DISABLE_AUG_LIST: ['placeholder']
-    AUG_CONFIG_LIST: ['placeholder']
+    AUG_CONFIG_LIST: []
 
 
 POINT_FEATURE_ENCODING: {

@@ -8,13 +8,13 @@ DATA_CONFIG:
 MODEL:
     NAME: CaDDN
 
-    FFN:
-        NAME: FrustumFeatureNetwork
+    FFE:
+        NAME: DepthFFE
         CLASS_NET:
             NAME: DeepLabV3_ResNet101
             ARGS: {
                 "feat_extract_layer": "layer1",
-                "pretrained_path": checkpoints/deeplabv3_resnet101.pth
+                "pretrained_path": ../checkpoints/deeplabv3_resnet101.pth
             }
         CHANNEL_REDUCE:
             ENABLED: True
@@ -39,10 +39,10 @@ MODEL:
             "padding_mode": "zeros"
         }
 
-    VOXEL_COLLAPSE:
+    MAP_TO_BEV:
         NAME: Conv2DCollapse
+        NUM_BEV_FEATURES: 64
         ARGS: {
-            "channels": 64,
             "kernel_size": 1,
             "stride": 1,
             "bias": False

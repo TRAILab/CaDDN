@@ -3,13 +3,15 @@ from .point_rcnn import PointRCNN
 from .pointpillar import PointPillar
 from .pv_rcnn import PVRCNN
 from .second_net import SECONDNet
+from .caddn import CaDDN
 
 __all__ = {
     'Detector3DTemplate': Detector3DTemplate,
     'SECONDNet': SECONDNet,
     'PVRCNN': PVRCNN,
     'PointPillar': PointPillar,
-    'PointRCNN': PointRCNN
+    'PointRCNN': PointRCNN,
+    'CaDDN': CaDDN
 }
 
 
