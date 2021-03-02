@@ -3,7 +3,13 @@ CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/kitti_dataset.yaml
     POINT_CLOUD_RANGE: [2, -30.08, -3.0, 46.8, 30.08, 1.0]
-    VOXEL_SIZE: [0.16, 0.16, 4]
+
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: calculate_grid_size
+          VOXEL_SIZE: [0.16, 0.16, 0.16]
 
 MODEL:
     NAME: CaDDN

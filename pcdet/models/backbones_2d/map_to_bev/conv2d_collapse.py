@@ -6,7 +6,7 @@ from pcdet.models.model_utils.basic_block_2d import BasicBlock2D
 
 class Conv2DCollapse(nn.Module):
 
-    def __init__(self, model_cfg, **kwargs):
+    def __init__(self, model_cfg, grid_size):
         """
         Initializes 3D convolution collapse module
         Args:
@@ -15,9 +15,8 @@ class Conv2DCollapse(nn.Module):
         """
         super().__init__()
         self.model_cfg = model_cfg
-        num_heights = 40
+        self.num_heights = grid_size[-1]
         self.num_bev_features = self.model_cfg.NUM_BEV_FEATURES
-        self.num_heights = num_heights
         self.block = BasicBlock2D(in_channels=self.num_bev_features * self.num_heights,
                                   out_channels=self.num_bev_features,
                                   **self.model_cfg.ARGS)
