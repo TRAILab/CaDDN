@@ -410,18 +410,10 @@ class KittiDataset(DatasetTemplate):
         info = copy.deepcopy(self.kitti_infos[index])
 
         sample_idx = info['point_cloud']['lidar_idx']
-
-        points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
         img_shape = info['image']['image_shape']
 
-        if self.dataset_cfg.FOV_POINTS_ONLY:
-            pts_rect = calib.lidar_to_rect(points[:, 0:3])
-            fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
-            points = points[fov_flag]
-
         input_dict = {
-            'points': points,
             'frame_id': sample_idx,
             'calib': calib,
             'image_shape': img_shape

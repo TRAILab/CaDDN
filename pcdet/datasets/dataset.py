@@ -140,8 +140,6 @@ class DatasetTemplate(torch_data.Dataset):
                 gt_boxes_2d = np.concatenate((data_dict['gt_box2d'], gt_classes), axis=1)
                 data_dict['gt_box2d'] = gt_boxes_2d
 
-        data_dict = self.point_feature_encoder.forward(data_dict)
-
         data_dict = self.data_processor.forward(
             data_dict=data_dict
         )

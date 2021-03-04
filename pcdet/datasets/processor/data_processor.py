@@ -20,8 +20,11 @@ class DataProcessor(object):
     def mask_points_and_boxes_outside_range(self, data_dict=None, config=None):
         if data_dict is None:
             return partial(self.mask_points_and_boxes_outside_range, config=config)
-        mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
-        data_dict['points'] = data_dict['points'][mask]
+
+        if data_dict.get('points', None) is not None:
+            mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
+            data_dict['points'] = data_dict['points'][mask]
+
         if data_dict.get('gt_boxes', None) is not None and config.REMOVE_OUTSIDE_BOXES and self.training:
             mask = box_utils.mask_boxes_outside_range_numpy(
                 data_dict['gt_boxes'], self.point_cloud_range, min_num_corners=config.get('min_num_corners', 1)
