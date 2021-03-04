@@ -122,6 +122,16 @@ sh scripts/slurm_test_mgpu.sh ${PARTITION} ${NUM_GPUS} \
 
 
 ### Train a model
+Download the pretrained [DeepLabV3 model](https://download.pytorch.org/models/deeplabv3_resnet101_coco-586e9e4e.pth) and place within the `checkpoints` directory
+```shell script
+CaDDN
+├── checkpoints
+│   ├── deeplabv3_resnet101_coco-586e9e4e.pth
+├── data
+├── pcdet
+├── tools
+```
+
 You could optionally add extra command line parameters `--batch_size ${BATCH_SIZE}` and `--epochs ${EPOCHS}` to specify your preferred parameters.
 
 
@@ -137,4 +147,4 @@ sh scripts/slurm_train.sh ${PARTITION} ${JOB_NAME} ${NUM_GPUS} --cfg_file ${CONF
 * Train with a single GPU:
 ```shell script
 python train.py --cfg_file ${CONFIG_FILE}
-```
+``+`

@@ -7,11 +7,11 @@ import torchvision
 import kornia
 
 
-class Segmentation(nn.Module):
+class DDNTemplate(nn.Module):
 
     def __init__(self, constructor, feat_extract_layer, num_classes, pretrained_path=None, aux_loss=None):
         """
-        Initializes segmentation network.
+        Initializes depth distribution network.
         Args:
             constructor [function]: Model constructor
             feat_extract_layer [string]: Layer to extract features from
@@ -94,7 +94,7 @@ class Segmentation(nn.Module):
         Args:
             images [torch.Tensor(N, 3, H_in, W_in)]: Input images
         Returns
-            result [dict[torch.Tensor]]: Segmentation result
+            result [dict[torch.Tensor]]: Depth distribution result
                 feat [torch.Tensor(N, C, H_out, W_out)]: Image features
                 out [torch.Tensor(N, num_classes, H_out, W_out)]: Classification logits
                 aux [torch.Tensor(N, num_classes, H_out, W_out)]: Auxillary classification scores
@@ -133,6 +133,13 @@ class Segmentation(nn.Module):
         """
         x = images
         if self.pretrained:
+            # TO DO: Detect for padded image pixels here
+            # mask = x < 0
+
             # Match ResNet pretrained preprocessing
             x = kornia.normalize(x, mean=self.norm_mean, std=self.norm_std)
+
+            # TO DO: Make padded pixels = 0
+            # x[mask] = 0
+
         return x
