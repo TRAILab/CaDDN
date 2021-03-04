@@ -40,7 +40,6 @@ class DepthFFE(nn.Module):
             images [torch.Tensor(N, 3, H_in, W_in)]: Input images
         Returns:
             frustum_features [torch.Tensor(N, C, D, H_out, W_out)]: Image depth features
-            depth_logits [torch.Tensor(N, D, H_, W_out)]:
         """
         # Pixel-wise depth classification
         ddn_result = self.ddn(images)
@@ -59,7 +58,7 @@ class DepthFFE(nn.Module):
             self.forward_ret_dict["depth_map"] = batch_dict["depth_map"]
             self.forward_ret_dict["depth_logits"] = batch_dict["depth_logits"]
 
-        return frustum_features
+        return batch_dict
 
     def create_frustum_features(self, image_features, depth_logits):
         """

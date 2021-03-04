@@ -31,4 +31,5 @@ class Conv2DCollapse(nn.Module):
         """
         bev_features = voxel_features.flatten(start_dim=1, end_dim=2)  # (B, C, Z, Y, X) -> (B, C*Z, Y, X)
         bev_features = self.block(bev_features)  # (B, C*Z, Y, X) -> (B, C, Y, X)
-        return bev_features
+        batch_dict["spatial_features"] = bev_features
+        return batch_dict
