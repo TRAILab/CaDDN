@@ -3,11 +3,11 @@ import pickle
 
 import numpy as np
 from skimage import io
+import skimage.transform
 
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
 from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from ..dataset import DatasetTemplate
-
 
 class KittiDataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
@@ -64,6 +64,22 @@ class KittiDataset(DatasetTemplate):
         assert lidar_file.exists()
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
 
+    def get_image(self, idx):
+        """
+        Loads image for a sample
+        Args:
+            idx [int]: Index of the image sample
+        Returns:
+            image [np.ndarray]: RGB Image
+        """
+        img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
+        assert img_file.exists()
+        image = io.imread(img_file)
+        image = image[:, :, :3]  # Remove alpha channel
+        image = image.astype(np.float32)
+        image /= 255.0
+        return image
+
     def get_image_shape(self, idx):
         img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
         assert img_file.exists()
@@ -73,6 +89,24 @@ class KittiDataset(DatasetTemplate):
         label_file = self.root_split_path / 'label_2' / ('%s.txt' % idx)
         assert label_file.exists()
         return object3d_kitti.get_objects_from_label(label_file)
+
+    def get_depth_map(self, idx, downsample_factor):
+        """
+        Loads depth map for a sample
+        Args:
+            idx [str]: Index of the sample
+            downsample_factor [int]: Downsample factor for the depth map
+        Returns:
+            depth [np.ndarray(H, W)]: Depth map
+        """
+        depth_file = self.root_split_path / 'depth_2' / ('%s.png' % idx)
+        assert depth_file.exists()
+        depth = io.imread(depth_file)
+        depth = depth.astype(np.float32)
+        depth /= 256.0
+        depth = skimage.transform.downscale_local_mean(image=depth,
+                                                       factors=(downsample_factor, downsample_factor))
+        return depth
 
     def get_calib(self, idx):
         calib_file = self.root_split_path / 'calib' / ('%s.txt' % idx)
@@ -242,6 +276,38 @@ class KittiDataset(DatasetTemplate):
         with open(db_info_save_path, 'wb') as f:
             pickle.dump(all_db_infos, f)
 
+    def update_data(self, example, calib):
+        """
+        Updates example with optional items
+        Args:
+            example [dict]: Data example returned by __getitem__
+            calib [Calibration]: Calibration for example
+        Returns:
+            example [dict]: Updated data example returned by __getitem__
+        """
+        # Image
+        if "IMAGE" in self.dataset_cfg and self.dataset_cfg.IMAGE.ENABLED:
+            example['image'] = self.get_image(example["frame_id"])
+
+        # Depth Map
+        if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
+            example['depth_map'] = self.get_depth_map(example["frame_id"],
+                                                      downsample_factor=self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR)
+
+        # Depth Map
+        if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:
+            # Convert calibration matrices to homogeneous format and combine
+            V2C = np.vstack((calib.V2C, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
+            R0 = np.hstack((calib.R0, np.zeros((3, 1), dtype=np.float32)))  # (3, 4)
+            R0 = np.vstack((R0, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
+            V2R = R0 @ V2C
+            example.update({
+                "trans_lidar_to_cam": V2R,
+                "trans_cam_to_img": calib.P2
+            })
+
+        return example
+
     @staticmethod
     def generate_prediction_dicts(batch_dict, pred_dicts, class_names, output_path=None):
         """
@@ -338,7 +404,6 @@ class KittiDataset(DatasetTemplate):
         return len(self.kitti_infos)
 
     def __getitem__(self, index):
-        # index = 4
         if self._merge_all_iters_to_one_epoch:
             index = index % len(self.kitti_infos)
 
@@ -348,8 +413,8 @@ class KittiDataset(DatasetTemplate):
 
         points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
-
         img_shape = info['image']['image_shape']
+
         if self.dataset_cfg.FOV_POINTS_ONLY:
             pts_rect = calib.lidar_to_rect(points[:, 0:3])
             fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
@@ -359,6 +424,7 @@ class KittiDataset(DatasetTemplate):
             'points': points,
             'frame_id': sample_idx,
             'calib': calib,
+            'image_shape': img_shape
         }
 
         if 'annos' in info:
@@ -366,19 +432,22 @@ class KittiDataset(DatasetTemplate):
             annos = common_utils.drop_info_with_name(annos, name='DontCare')
             loc, dims, rots = annos['location'], annos['dimensions'], annos['rotation_y']
             gt_names = annos['name']
+            bbox = annos['bbox']
             gt_boxes_camera = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
             gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
 
             input_dict.update({
                 'gt_names': gt_names,
-                'gt_boxes': gt_boxes_lidar
+                'gt_boxes': gt_boxes_lidar,
+                'gt_boxes2d': bbox
             })
+
             road_plane = self.get_road_plane(sample_idx)
             if road_plane is not None:
                 input_dict['road_plane'] = road_plane
 
         data_dict = self.prepare_data(data_dict=input_dict)
-
+        data_dict = self.update_data(example=data_dict, calib=calib)
         data_dict['image_shape'] = img_shape
         return data_dict
 

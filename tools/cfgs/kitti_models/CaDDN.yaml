@@ -11,6 +11,17 @@ DATA_CONFIG:
         - NAME: calculate_grid_size
           VOXEL_SIZE: [0.16, 0.16, 0.16]
 
+    IMAGE:
+        ENABLED: True
+        COLLATE:
+            MODE: Pad
+            CONSTANT_VALUES: [0.485, 0.456, 0.406]
+    DEPTH_MAP:
+        ENABLED: True
+        DOWNSAMPLE_FACTOR: 4
+    CALIB:
+        ENABLED: True
+
 MODEL:
     NAME: CaDDN
 
