@@ -101,7 +101,7 @@ class KittiDataset(DatasetTemplate):
         """
         depth_file = self.root_split_path / 'depth_2' / ('%s.png' % idx)
         assert depth_file.exists()
-        depth = cv2.imread(depth_file, cv2.IMREAD_ANYDEPTH)
+        depth = io.imread(depth_file)
         depth = depth.astype(np.float32)
         depth /= 256.0
         depth = skimage.transform.downscale_local_mean(image=depth,
