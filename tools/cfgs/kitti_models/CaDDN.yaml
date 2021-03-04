@@ -52,6 +52,10 @@ DATA_CONFIG:
         COLLATE:
             MODE: Pad
             CONSTANT_VALUES: [0.485, 0.456, 0.406]
+    DEPTH_MAP:
+        ENABLED: True
+    CALIB:
+        ENABLED: True
 
 MODEL:
     NAME: PointPillar

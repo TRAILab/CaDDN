@@ -289,17 +289,13 @@ class KittiDataset(DatasetTemplate):
         if "IMAGE" in self.dataset_cfg and self.dataset_cfg.IMAGE.ENABLED:
             example['image'] = self.get_image(sample_idx)
 
-        # 2D Detections
-        if "INCLUDE_2D_DETS" in self.dataset_cfg and self.dataset_cfg.INCLUDE_2D_DETS:
-            example['det_boxes'] = self.get_det_boxes(sample_idx)
-
         # Depth Map
         if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
             example['depth_map'] = self.get_depth_map(sample_idx,
                                                       downsample_factor=self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR)
 
         # Depth Map
-        if "INCLUDE_CALIB_MATRICIES" in self.dataset_cfg and self.dataset_cfg.INCLUDE_CALIB_MATRICIES:
+        if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:
             calib = example["calib"]
 
             # Convert calibration matrices to homogeneous format and combine
@@ -311,14 +307,6 @@ class KittiDataset(DatasetTemplate):
                 "trans_lidar_to_cam": V2R,
                 "trans_cam_to_img": calib.P2
             })
-
-        # LiDAR Data
-        if "INCLUDE_LIDAR" in self.dataset_cfg and not self.dataset_cfg.INCLUDE_LIDAR:
-            example.pop("voxels")
-            example.pop("num_points")
-            example.pop("coordinates")
-            example.pop("voxel_centers")
-            example.pop("points")
 
         return example
 
