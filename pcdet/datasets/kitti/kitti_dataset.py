@@ -276,28 +276,26 @@ class KittiDataset(DatasetTemplate):
         with open(db_info_save_path, 'wb') as f:
             pickle.dump(all_db_infos, f)
 
-    def update_data(self, example, sample_idx):
+    def update_data(self, example, calib):
         """
         Updates example with optional items
         Args:
             example [dict]: Data example returned by __getitem__
-            sample_idx [string]: Dataset sample index
+            calib [Calibration]: Calibration for example
         Returns:
             example [dict]: Updated data example returned by __getitem__
         """
         # Image
         if "IMAGE" in self.dataset_cfg and self.dataset_cfg.IMAGE.ENABLED:
-            example['image'] = self.get_image(sample_idx)
+            example['image'] = self.get_image(example["frame_id"])
 
         # Depth Map
         if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
-            example['depth_map'] = self.get_depth_map(sample_idx,
+            example['depth_map'] = self.get_depth_map(example["frame_id"],
                                                       downsample_factor=self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR)
 
         # Depth Map
         if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:
-            calib = example["calib"]
-
             # Convert calibration matrices to homogeneous format and combine
             V2C = np.vstack((calib.V2C, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
             R0 = np.hstack((calib.R0, np.zeros((3, 1), dtype=np.float32)))  # (3, 4)
@@ -441,7 +439,7 @@ class KittiDataset(DatasetTemplate):
             input_dict.update({
                 'gt_names': gt_names,
                 'gt_boxes': gt_boxes_lidar,
-                'gt_box2d': bbox
+                'gt_boxes2d': bbox
             })
 
             road_plane = self.get_road_plane(sample_idx)
@@ -449,7 +447,7 @@ class KittiDataset(DatasetTemplate):
                 input_dict['road_plane'] = road_plane
 
         data_dict = self.prepare_data(data_dict=input_dict)
-        data_dict = self.update_data(example=data_dict, sample_idx=sample_idx)
+        data_dict = self.update_data(example=data_dict, calib=calib)
         data_dict['image_shape'] = img_shape
         return data_dict
 
