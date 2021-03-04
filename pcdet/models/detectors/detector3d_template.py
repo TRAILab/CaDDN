@@ -6,7 +6,7 @@ import torch.nn as nn
 from ...ops.iou3d_nms import iou3d_nms_utils
 from .. import backbones_2d, backbones_3d, dense_heads, roi_heads
 from ..backbones_2d import map_to_bev
-from ..backbones_3d import pfe, vfe, ffe
+from ..backbones_3d import pfe, vfe, ffe, f2v
 from ..model_utils import model_nms_utils
 
 
@@ -69,6 +69,7 @@ class Detector3DTemplate(nn.Module):
             model_cfg=self.model_cfg.FFE
         )
         model_info_dict['num_point_features'] = ffe_module.get_output_feature_dim()
+        model_info_dict['disc_cfg'] = ffe_module.disc_cfg
         model_info_dict['module_list'].append(ffe_module)
         return ffe_module, model_info_dict
 
@@ -76,7 +77,13 @@ class Detector3DTemplate(nn.Module):
         if self.model_cfg.get('F2V', None) is None:
             return None, model_info_dict
 
-        f2v_module = None
+        f2v_module = f2v.__all__[self.model_cfg.F2V.NAME](
+            model_cfg=self.model_cfg.F2V,
+            grid_size=model_info_dict['grid_size'],
+            pc_range=model_info_dict['point_cloud_range'],
+            disc_cfg=model_info_dict['disc_cfg']
+        )
+        model_info_dict['module_list'].append(f2v_module)
         return f2v_module, model_info_dict
 
     def build_backbone_3d(self, model_info_dict):

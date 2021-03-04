@@ -57,7 +57,7 @@ MODEL:
 
     F2V:
         NAME: FrustumToVoxel
-        ARGS: {
+        SAMPLER: {
             "mode": "bilinear",
             "padding_mode": "zeros"
         }
