@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import numpy as np
 import torch
-
+import kornia
 from .detectors import build_detector
 
 
@@ -19,7 +19,10 @@ def load_data_to_gpu(batch_dict):
             continue
         if key in ['frame_id', 'metadata', 'calib', 'image_shape']:
             continue
-        batch_dict[key] = torch.from_numpy(val).float().cuda()
+        if key in ["image"]:
+            batch_dict[key] = kornia.image_to_tensor(val).float().cuda()
+        else:
+            batch_dict[key] = torch.from_numpy(val).float().cuda()
 
 
 def model_fn_decorator():
