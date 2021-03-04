@@ -47,7 +47,7 @@ MODEL:
             "depth_min": 2.0,
             "depth_max": 46.8
         }
-        LOSS_CONFIG: {
+        DDN_LOSS: {
             'weight': 3.0,
             'alpha': 0.25,
             'gamma': 2.0,

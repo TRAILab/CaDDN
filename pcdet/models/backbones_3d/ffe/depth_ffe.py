@@ -1,7 +1,8 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-from pcdet.models.backbones_3d.ffe import ddn
+from . import ddn
+from .ddn_loss
 from pcdet.models.model_utils.basic_block_2d import BasicBlock2D
 
 
@@ -14,6 +15,7 @@ class DepthFFE(nn.Module):
             model_cfg [EasyDict]: Depth classification network config
         """
         super().__init__()
+        self.model_cfg = model_cfg
         self.disc_cfg = model_cfg.DISCRETIZE
 
         # Create classification network
@@ -27,7 +29,7 @@ class DepthFFE(nn.Module):
         # Create channel reduce module
         self.channel_reduce = BasicBlock2D(**model_cfg.CHANNEL_REDUCE)
 
-        self.loss_module = ""
+        self.ddn_loss = DDNLoss(**model_cfg.DDNLoss)
         self.forward_ret_dict = {}
 
     def get_output_feature_dim(self):
@@ -83,7 +85,6 @@ class DepthFFE(nn.Module):
         # Multiply to form image depth feature volume
         frustum_features = depth_probs * image_features
         return frustum_features
-
 
     def get_loss():
         return None
