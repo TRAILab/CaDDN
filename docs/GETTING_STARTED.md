@@ -147,4 +147,4 @@ sh scripts/slurm_train.sh ${PARTITION} ${JOB_NAME} ${NUM_GPUS} --cfg_file ${CONF
 * Train with a single GPU:
 ```shell script
 python train.py --cfg_file ${CONFIG_FILE}
-``+`
+```
