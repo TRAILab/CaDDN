@@ -3,7 +3,7 @@ from functools import partial
 import numpy as np
 
 from ...utils import common_utils
-from . import augmentor_utils, database_sampler
+from . import augmentor_utils, database_sampler, image_augmentor_utils
 
 
 class DataAugmentor(object):
@@ -39,7 +39,7 @@ class DataAugmentor(object):
 
     def __setstate__(self, d):
         self.__dict__.update(d)
-   
+
     def random_world_flip(self, data_dict=None, config=None):
         if data_dict is None:
             return partial(self.random_world_flip, config=config)
@@ -76,6 +76,24 @@ class DataAugmentor(object):
         )
         data_dict['gt_boxes'] = gt_boxes
         data_dict['points'] = points
+        return data_dict
+
+    def random_image_flip(self, data_dict=None, config=None):
+        if data_dict is None:
+            return partial(self.random_image_flip, config=config)
+        image = data_dict["image"]
+        depth_map = data_dict["depth_map"]
+        gt_boxes = data_dict['gt_boxes']
+        calib = data_dict["calib"]
+        for cur_axis in config['ALONG_AXIS_LIST']:
+            assert cur_axis in ['horizontal']
+            image, depth_map, gt_boxes = getattr(image_augmentor_utils, 'random_flip_%s' % cur_axis)(
+                image, depth_map, gt_boxes, calib,
+            )
+
+        data_dict['image'] = image
+        data_dict['depth_map'] = depth_map
+        data_dict['gt_boxes'] = gt_boxes
         return data_dict
 
     def forward(self, data_dict):

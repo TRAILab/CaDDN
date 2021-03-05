@@ -276,36 +276,36 @@ class KittiDataset(DatasetTemplate):
         with open(db_info_save_path, 'wb') as f:
             pickle.dump(all_db_infos, f)
 
-    def update_data(self, example, calib):
+    def update_data(self, data_dict):
         """
-        Updates example with optional items
+        Updates data dictionary with additional items
         Args:
-            example [dict]: Data example returned by __getitem__
-            calib [Calibration]: Calibration for example
+            data_dict [dict]: Data dictionary returned by __getitem__
         Returns:
-            example [dict]: Updated data example returned by __getitem__
+            data_dict [dict]: Updated data dictionary returned by __getitem__
         """
         # Image
         if "IMAGE" in self.dataset_cfg and self.dataset_cfg.IMAGE.ENABLED:
-            example['image'] = self.get_image(example["frame_id"])
+            data_dict['image'] = self.get_image(data_dict["frame_id"])
 
         # Depth Map
         if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
-            example['depth_map'] = self.get_depth_map(example["frame_id"])
+            data_dict['depth_map'] = self.get_depth_map(data_dict["frame_id"])
 
         # Depth Map
         if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:
             # Convert calibration matrices to homogeneous format and combine
+            calib = data_dict["calib"]
             V2C = np.vstack((calib.V2C, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
             R0 = np.hstack((calib.R0, np.zeros((3, 1), dtype=np.float32)))  # (3, 4)
             R0 = np.vstack((R0, np.array([0, 0, 0, 1], dtype=np.float32)))  # (4, 4)
             V2R = R0 @ V2C
-            example.update({
+            data_dict.update({
                 "trans_lidar_to_cam": V2R,
                 "trans_cam_to_img": calib.P2
             })
 
-        return example
+        return data_dict
 
     @staticmethod
     def generate_prediction_dicts(batch_dict, pred_dicts, class_names, output_path=None):
@@ -437,8 +437,8 @@ class KittiDataset(DatasetTemplate):
             if road_plane is not None:
                 input_dict['road_plane'] = road_plane
 
+        input_dict = self.update_data(data_dict=input_dict)
         data_dict = self.prepare_data(data_dict=input_dict)
-        data_dict = self.update_data(example=data_dict, calib=calib)
         data_dict['image_shape'] = img_shape
         return data_dict
 
