@@ -38,7 +38,7 @@ class SigmoidFocalClassificationLoss(nn.Module):
                 Sigmoid cross entropy loss without reduction
         """
         loss = torch.clamp(input, min=0) - input * target + \
-               torch.log1p(torch.exp(-torch.abs(input)))
+            torch.log1p(torch.exp(-torch.abs(input)))
         return loss
 
     def forward(self, input: torch.Tensor, target: torch.Tensor, weights: torch.Tensor):
@@ -81,6 +81,7 @@ class WeightedSmoothL1Loss(nn.Module):
                   | abs(x) - 0.5 * beta   otherwise,
     where x = input - target.
     """
+
     def __init__(self, beta: float = 1.0 / 9.0, code_weights: list = None):
         """
         Args:
@@ -183,6 +184,7 @@ class WeightedCrossEntropyLoss(nn.Module):
     Transform input to fit the fomation of PyTorch offical cross entropy loss
     with anchor-wise weighting.
     """
+
     def __init__(self):
         super(WeightedCrossEntropyLoss, self).__init__()
 
@@ -230,3 +232,32 @@ def get_corner_loss_lidar(pred_bbox3d: torch.Tensor, gt_bbox3d: torch.Tensor):
     corner_loss = WeightedSmoothL1Loss.smooth_l1_loss(corner_dist, beta=1.0)
 
     return corner_loss.mean(dim=1)
+
+
+def compute_fg_mask(gt_boxes_2d, shape, downsample_factor=1, device=torch.device("cpu")):
+    """
+    Compute foreground mask for images
+    Args:
+        gt_boxes_2d [torch.Tensor(B, N, 4)]: 2D box labels
+        shape [torch.Size or tuple]: Foreground mask desired shape
+        downsample_factor [int]: Downsample factor for image
+        device [torch.device]: Foreground mask desired device
+    Returns:
+        fg_mask [torch.Tensor(shape)]: Foreground mask
+    """
+    fg_mask = torch.zeros(shape, dtype=torch.bool, device=device)
+
+    # Set box corners
+    gt_boxes_2d /= downsample_factor
+    gt_boxes_2d[:, :, :2] = torch.floor(gt_boxes_2d[:, :, :2])
+    gt_boxes_2d[:, :, 2:] = torch.ceil(gt_boxes_2d[:, :, 2:])
+    gt_boxes_2d = gt_boxes_2d.long()
+
+    # Set all values within each box to True
+    B, N = gt_boxes_2d.shape[:2]
+    for b in range(B):
+        for n in range(N):
+            u1, v1, u2, v2 = gt_boxes_2d[b, n]
+            fg_mask[b, v1:v2, u1:u2] = True
+
+    return fg_mask
