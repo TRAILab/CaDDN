@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from det3d.utils import loss_utils
+from pcdet.utils import loss_utils
 
 
 class Balancer(nn.Module):
@@ -11,19 +11,19 @@ class Balancer(nn.Module):
         Args:
             fg_weight [float]: Foreground loss weight
             bg_weight [float]: Background loss weight
-            downsample_factor [int]: Downsample factor for image
+            downsample_factor [int]: Depth map downsample factor
         """
         super().__init__()
         self.fg_weight = fg_weight
         self.bg_weight = bg_weight
         self.downsample_factor = downsample_factor
 
-    def forward(self, loss, gt_boxes_2d):
+    def forward(self, loss, gt_boxes2d):
         """
         Forward pass
         Args:
             loss [torch.Tensor(B, H, W)]: Pixel-wise loss
-            fg_mask [torch.Tensor(B, H, W)]: Foreground Mask
+            gt_boxes2d [torch.Tensor (B, N, 4)]: 2D box labels for foreground/background balancing
         Returns:
             loss [torch.Tensor(1)]: Total loss after foreground/background balancing
             tb_dict [dict[float]]: All losses to log in tensorboard
@@ -46,5 +46,5 @@ class Balancer(nn.Module):
 
         # Get total loss
         loss = fg_loss + bg_loss
-        tb_dict = {"fg_bg_balancer_loss": loss.item(), "fg_loss": fg_loss.item(), "bg_loss": bg_loss.item()}
+        tb_dict = {"balancer_loss": loss.item(), "fg_loss": fg_loss.item(), "bg_loss": bg_loss.item()}
         return loss, tb_dict

@@ -14,7 +14,7 @@ class FrustumToVoxel(nn.Module):
             model_cfg [EasyDict]: Module configuration
             grid_size [np.array(3)]: Voxel grid shape [X, Y, Z]
             pc_range [list]: Voxelization point cloud range [X_min, Y_min, Z_min, X_max, Y_max, Z_max]
-            disc_cfg [int]: Depth discretiziation configuration
+            disc_cfg [dict]: Depth discretiziation configuration
         """
         super().__init__()
         self.model_cfg = model_cfg

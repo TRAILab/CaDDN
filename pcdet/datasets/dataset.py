@@ -36,6 +36,7 @@ class DatasetTemplate(torch_data.Dataset):
 
         self.grid_size = self.data_processor.grid_size
         self.voxel_size = self.data_processor.voxel_size
+        self.depth_downsample_factor = self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR
         self.total_epochs = 0
         self._merge_all_iters_to_one_epoch = False
 
@@ -200,14 +201,14 @@ class DatasetTemplate(torch_data.Dataset):
                         pad_width = (pad_h, pad_w)
 
                         if key == "image":
-                                  pad_width = (pad_h, pad_w, (0, 0))
+                            pad_width = (pad_h, pad_w, (0, 0))
                         elif key == "depth_map":
-                                  pad_width = (pad_h, pad_w)
+                            pad_width = (pad_h, pad_w)
 
                         image_pad = np.pad(image,
-                                     pad_width=pad_width,
-                                     mode='constant',
-                                     constant_values=0)
+                                           pad_width=pad_width,
+                                           mode='constant',
+                                           constant_values=0)
 
                         images.append(image_pad)
                     ret[key] = np.stack(images, axis=0)

@@ -2,34 +2,35 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from . import ddn
-from .ddn_loss
+from .ddn_loss import DDNLoss
 from pcdet.models.model_utils.basic_block_2d import BasicBlock2D
 
 
 class DepthFFE(nn.Module):
 
-    def __init__(self, model_cfg):
+    def __init__(self, model_cfg, downsample_factor):
         """
         Initialize depth classification network
         Args:
             model_cfg [EasyDict]: Depth classification network config
+            downsample_factor [int]: Depth map downsample factor
         """
         super().__init__()
         self.model_cfg = model_cfg
         self.disc_cfg = model_cfg.DISCRETIZE
+        self.downsample_factor = downsample_factor
 
-        # Create classification network
+        # Create modules
         ddn_cfg = model_cfg.DDN
         self.ddn = ddn.__all__[ddn_cfg.NAME](
-            num_classes=model_cfg.DISCRETIZE["num_bins"] + 1,
+            num_classes=self.disc_cfg["num_bins"] + 1,
             backbone_name=ddn_cfg.BACKBONE_NAME,
             **ddn_cfg.ARGS
         )
-
-        # Create channel reduce module
         self.channel_reduce = BasicBlock2D(**model_cfg.CHANNEL_REDUCE)
-
-        self.ddn_loss = DDNLoss(**model_cfg.DDNLoss)
+        self.ddn_loss = DDNLoss(disc_cfg=self.disc_cfg,
+                                downsample_factor=downsample_factor,
+                                **model_cfg.DDN_LOSS)
         self.forward_ret_dict = {}
 
     def get_output_feature_dim(self):
@@ -58,8 +59,8 @@ class DepthFFE(nn.Module):
 
         if self.training:
             self.forward_ret_dict["depth_map"] = batch_dict["depth_map"]
-            self.forward_ret_dict["depth_logits"] = batch_dict["depth_logits"]
-
+            self.forward_ret_dict["gt_boxes2d"] = batch_dict["gt_boxes2d"]
+            self.forward_ret_dict["depth_logits"] = depth_logits
         return batch_dict
 
     def create_frustum_features(self, image_features, depth_logits):
@@ -87,4 +88,5 @@ class DepthFFE(nn.Module):
         return frustum_features
 
     def get_loss():
-        return None
+        loss, tb_dict = self.ddn_loss(**self.forward_ret_dict)
+        return loss, tb_dict

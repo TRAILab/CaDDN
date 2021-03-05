@@ -9,6 +9,7 @@ from ...ops.roiaware_pool3d import roiaware_pool3d_utils
 from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from ..dataset import DatasetTemplate
 
+
 class KittiDataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
         """
@@ -90,12 +91,11 @@ class KittiDataset(DatasetTemplate):
         assert label_file.exists()
         return object3d_kitti.get_objects_from_label(label_file)
 
-    def get_depth_map(self, idx, downsample_factor):
+    def get_depth_map(self, idx):
         """
         Loads depth map for a sample
         Args:
             idx [str]: Index of the sample
-            downsample_factor [int]: Downsample factor for the depth map
         Returns:
             depth [np.ndarray(H, W)]: Depth map
         """
@@ -105,7 +105,7 @@ class KittiDataset(DatasetTemplate):
         depth = depth.astype(np.float32)
         depth /= 256.0
         depth = skimage.transform.downscale_local_mean(image=depth,
-                                                       factors=(downsample_factor, downsample_factor))
+                                                       factors=(self.depth_downsample_factor, self.depth_downsample_factor))
         return depth
 
     def get_calib(self, idx):
@@ -291,8 +291,7 @@ class KittiDataset(DatasetTemplate):
 
         # Depth Map
         if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
-            example['depth_map'] = self.get_depth_map(example["frame_id"],
-                                                      downsample_factor=self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR)
+            example['depth_map'] = self.get_depth_map(example["frame_id"])
 
         # Depth Map
         if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:

@@ -38,7 +38,8 @@ class Detector3DTemplate(nn.Module):
             'num_point_features': self.dataset.point_feature_encoder.num_point_features,
             'grid_size': self.dataset.grid_size,
             'point_cloud_range': self.dataset.point_cloud_range,
-            'voxel_size': self.dataset.voxel_size
+            'voxel_size': self.dataset.voxel_size,
+            'downsample_factor': self.dataset.depth_downsample_factor
         }
         for module_name in self.module_topology:
             module, model_info_dict = getattr(self, 'build_%s' % module_name)(
@@ -66,7 +67,8 @@ class Detector3DTemplate(nn.Module):
             return None, model_info_dict
 
         ffe_module = ffe.__all__[self.model_cfg.FFE.NAME](
-            model_cfg=self.model_cfg.FFE
+            model_cfg=self.model_cfg.FFE,
+            downsample_factor=model_info_dict["downsample_factor"]
         )
         model_info_dict['num_point_features'] = ffe_module.get_output_feature_dim()
         model_info_dict['disc_cfg'] = ffe_module.disc_cfg
