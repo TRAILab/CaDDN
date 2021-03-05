@@ -11,6 +11,12 @@ DATA_CONFIG:
         - NAME: calculate_grid_size
           VOXEL_SIZE: [0.16, 0.16, 0.16]
 
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['placeholder']
+        AUG_CONFIG_LIST:
+            - NAME: random_image_flip
+              ALONG_AXIS_LIST: ['horizontal']
+
     IMAGE:
         ENABLED: True
         COLLATE:
