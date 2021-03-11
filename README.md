@@ -1,4 +1,4 @@
-<img src="docs/open_mmlab.png" align="right" width="30%">
+<img src="docs/trailab.png" align="right" width="30%">
 
 # CaDDN
 
