@@ -6,14 +6,13 @@
 
 **Categorical Depth Distribution Network for Monocular 3D Object Detection**\
 Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
-**[[Paper](https://drive.google.com/file/d/1IpD9J3yyhmJutAjT18vR3k2PgwXWzEx2/view?usp=sharing)]**
+**[[Paper](https://arxiv.org/abs/2103.01100)]**
 
 
 ## Overview
 - [Changelog](#changelog)
 - [Model Zoo](#model-zoo)
 - [Installation](docs/INSTALL.md)
-- [Quick Demo](docs/DEMO.md)
 - [Getting Started](docs/GETTING_STARTED.md)
 - [Citation](#citation)
 
@@ -37,11 +36,6 @@ Selected supported methods are shown in the below table. The results are the 3D 
 ## Installation
 
 Please refer to [INSTALL.md](docs/INSTALL.md) for the installation of `CaDDN`.
-
-
-## Quick Demo
-Please refer to [DEMO.md](docs/DEMO.md) for a quick demo to test with a pretrained model and
-visualize the predicted results on your custom data or the original KITTI data.
 
 ## Getting Started
 
