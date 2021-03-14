@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -133,13 +134,13 @@ class DDNTemplate(nn.Module):
         """
         x = images
         if self.pretrained:
-            # TO DO: Detect for padded image pixels here
-            # mask = x < 0
+            # Create a mask for padded pixels
+            mask = torch.isnan(x)
 
             # Match ResNet pretrained preprocessing
             x = kornia.normalize(x, mean=self.norm_mean, std=self.norm_std)
 
-            # TO DO: Make padded pixels = 0
-            # x[mask] = 0
+            # Make padded pixels = 0
+            x[mask] = 0
 
         return x

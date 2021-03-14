@@ -185,7 +185,7 @@ class DatasetTemplate(torch_data.Dataset):
                         if val[k].size > 0:
                             batch_boxes2d[k, :val[k].__len__(), :] = val[k]
                     ret[key] = batch_boxes2d
-                elif key in ["image", "depth_map"]:
+                elif key in ["images", "depth_maps"]:
                     # Get largest image size (H, W)
                     max_h = 0
                     max_w = 0
@@ -199,16 +199,18 @@ class DatasetTemplate(torch_data.Dataset):
                         pad_h = common_utils.get_pad_params(desired_size=max_h, cur_size=image.shape[0])
                         pad_w = common_utils.get_pad_params(desired_size=max_w, cur_size=image.shape[1])
                         pad_width = (pad_h, pad_w)
+                        # Pad with nan, to be replaced later in the pipeline.
+                        pad_value = np.nan
 
-                        if key == "image":
+                        if key == "images":
                             pad_width = (pad_h, pad_w, (0, 0))
-                        elif key == "depth_map":
+                        elif key == "depth_maps":
                             pad_width = (pad_h, pad_w)
 
                         image_pad = np.pad(image,
                                            pad_width=pad_width,
                                            mode='constant',
-                                           constant_values=0)
+                                           constant_values=pad_value)
 
                         images.append(image_pad)
                     ret[key] = np.stack(images, axis=0)
