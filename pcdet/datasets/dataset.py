@@ -199,8 +199,8 @@ class DatasetTemplate(torch_data.Dataset):
                         pad_h = common_utils.get_pad_params(desired_size=max_h, cur_size=image.shape[0])
                         pad_w = common_utils.get_pad_params(desired_size=max_w, cur_size=image.shape[1])
                         pad_width = (pad_h, pad_w)
-                        # Pad with a special value of -1, to be replaced later in the pipeline.
-                        pad_value = -1.0
+                        # Pad with nan, to be replaced later in the pipeline.
+                        pad_value = np.nan
 
                         if key == "images":
                             pad_width = (pad_h, pad_w, (0, 0))
