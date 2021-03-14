@@ -36,7 +36,7 @@ class DepthFFE(nn.Module):
     def get_output_feature_dim(self):
         return self.channel_reduce.out_channels
 
-    def forward(self, batch_dict, **kwargs):
+    def forward(self, batch_dict):
         """
         Predicts depths and creates image depth feature volume using depth classification scores
         Args:
