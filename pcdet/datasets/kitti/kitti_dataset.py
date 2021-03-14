@@ -286,11 +286,11 @@ class KittiDataset(DatasetTemplate):
         """
         # Image
         if "IMAGE" in self.dataset_cfg and self.dataset_cfg.IMAGE.ENABLED:
-            data_dict['image'] = self.get_image(data_dict["frame_id"])
+            data_dict['images'] = self.get_image(data_dict["frame_id"])
 
         # Depth Map
         if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
-            data_dict['depth_map'] = self.get_depth_map(data_dict["frame_id"])
+            data_dict['depth_maps'] = self.get_depth_map(data_dict["frame_id"])
 
         # Depth Map
         if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:

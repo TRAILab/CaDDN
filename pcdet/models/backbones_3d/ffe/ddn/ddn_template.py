@@ -135,13 +135,12 @@ class DDNTemplate(nn.Module):
         x = images
         if self.pretrained:
             # Create a mask for zeroing padded pixels (x < 0)
-            eval_padding = lambda x: (x < 0.0) ? 0.0 : 1.0
-            padding_mask = eval_padding(x)
+            mask = x < 0
 
             # Match ResNet pretrained preprocessing
             x = kornia.normalize(x, mean=self.norm_mean, std=self.norm_std)
 
             # Make padded pixels = 0
-            x = numpy.multiply(x, padding_mask)
+            x[mask] = 0
 
         return x
