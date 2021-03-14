@@ -58,9 +58,10 @@ class DepthFFE(nn.Module):
         # Create image feature plane-sweep volume
         frustum_features = self.create_frustum_features(image_features=image_features,
                                                         depth_logits=depth_logits)
+        batch_dict["frustum_features"] = frustum_features
 
         if self.training:
-            self.forward_ret_dict["depth_map"] = batch_dict["depth_map"]
+            self.forward_ret_dict["depth_maps"] = batch_dict["depth_maps"]
             self.forward_ret_dict["gt_boxes2d"] = batch_dict["gt_boxes2d"]
             self.forward_ret_dict["depth_logits"] = depth_logits
         return batch_dict

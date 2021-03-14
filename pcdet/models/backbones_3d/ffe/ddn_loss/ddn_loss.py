@@ -40,12 +40,12 @@ class DDNLoss(nn.Module):
         self.loss_func = kornia.losses.FocalLoss(alpha=self.alpha, gamma=self.gamma, reduction="none")
         self.weight = weight
 
-    def forward(self, depth_logits, depth_map, gt_boxes2d):
+    def forward(self, depth_logits, depth_maps, gt_boxes2d):
         """
         Gets DDN loss
         Args:
             depth_logits: torch.Tensor(B, D+1, H, W)]: Predicted depth logits
-            depth_map: torch.Tensor(B, H, W)]: Depth map [m]
+            depth_maps: torch.Tensor(B, H, W)]: Depth map [m]
             gt_boxes2d [torch.Tensor (B, N, 4)]: 2D box labels for foreground/background balancing
         Returns:
             loss [torch.Tensor(1)]: Depth classification network loss
@@ -54,7 +54,7 @@ class DDNLoss(nn.Module):
         tb_dict = {}
 
         # Bin depth map to create target
-        depth_target = depth_utils.bin_depths(depth_map, **self.disc_cfg, target=True)
+        depth_target = depth_utils.bin_depths(depth_maps, **self.disc_cfg, target=True)
 
         # Compute loss
         loss = self.loss_func(depth_logits, depth_target)
