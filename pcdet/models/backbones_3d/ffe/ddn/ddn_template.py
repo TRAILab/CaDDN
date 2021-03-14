@@ -29,6 +29,7 @@ class DDNTemplate(nn.Module):
             # Preprocess Module
             self.norm_mean = torch.Tensor([0.485, 0.456, 0.406])
             self.norm_std = torch.Tensor([0.229, 0.224, 0.225])
+            self.eps = 1e-4
 
         # Model
         self.model = self.get_model(constructor=constructor)
@@ -135,7 +136,7 @@ class DDNTemplate(nn.Module):
         x = images
         if self.pretrained:
             # Create a mask for zeroing padded pixels (x < 0)
-            mask = x < 0
+            mask = x < 0 - self.eps
 
             # Match ResNet pretrained preprocessing
             x = kornia.normalize(x, mean=self.norm_mean, std=self.norm_std)
