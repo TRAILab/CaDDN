@@ -90,6 +90,6 @@ class DepthFFE(nn.Module):
         frustum_features = depth_probs * image_features
         return frustum_features
 
-    def get_loss():
+    def get_loss(self):
         loss, tb_dict = self.ddn_loss(**self.forward_ret_dict)
         return loss, tb_dict

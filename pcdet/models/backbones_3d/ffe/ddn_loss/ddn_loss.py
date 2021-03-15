@@ -52,7 +52,6 @@ class DDNLoss(nn.Module):
             tb_dict [dict[float]]: All losses to log in tensorboard
         """
         tb_dict = {}
-        breakpoint()
 
         # Bin depth map to create target
         depth_target = depth_utils.bin_depths(depth_maps, **self.disc_cfg, target=True)
@@ -61,7 +60,7 @@ class DDNLoss(nn.Module):
         loss = self.loss_func(depth_logits, depth_target)
 
         # Compute foreground/background balancing
-        loss, tb_dict = self.balancer(loss=loss, gt_boxes_2d=gt_boxes2d)
+        loss, tb_dict = self.balancer(loss=loss, gt_boxes2d=gt_boxes2d)
 
         # Final loss
         loss *= self.weight
