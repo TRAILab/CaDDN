@@ -36,14 +36,15 @@ class DepthFFE(nn.Module):
     def get_output_feature_dim(self):
         return self.channel_reduce.out_channels
 
-    def forward(self, batch_dict, **kwargs):
+    def forward(self, batch_dict):
         """
         Predicts depths and creates image depth feature volume using depth classification scores
         Args:
-            batch_dict [EasyDict]: Batch dictionary
+            batch_dict:
                 images [torch.Tensor(N, 3, H_in, W_in)]: Input images
         Returns:
-            frustum_features [torch.Tensor(N, C, D, H_out, W_out)]: Image depth features
+            batch_dict:
+                frustum_features [torch.Tensor(N, C, D, H_out, W_out)]: Image depth features
         """
         # Pixel-wise depth classification
         images = batch_dict["images"]
@@ -58,9 +59,10 @@ class DepthFFE(nn.Module):
         # Create image feature plane-sweep volume
         frustum_features = self.create_frustum_features(image_features=image_features,
                                                         depth_logits=depth_logits)
+        batch_dict["frustum_features"] = frustum_features
 
         if self.training:
-            self.forward_ret_dict["depth_map"] = batch_dict["depth_map"]
+            self.forward_ret_dict["depth_maps"] = batch_dict["depth_maps"]
             self.forward_ret_dict["gt_boxes2d"] = batch_dict["gt_boxes2d"]
             self.forward_ret_dict["depth_logits"] = depth_logits
         return batch_dict
@@ -89,6 +91,6 @@ class DepthFFE(nn.Module):
         frustum_features = depth_probs * image_features
         return frustum_features
 
-    def get_loss():
+    def get_loss(self):
         loss, tb_dict = self.ddn_loss(**self.forward_ret_dict)
         return loss, tb_dict

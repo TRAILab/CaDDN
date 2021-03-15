@@ -342,7 +342,7 @@ class KittiDataset(DatasetTemplate):
                 return pred_dict
 
             calib = batch_dict['calib'][batch_index]
-            image_shape = batch_dict['image_shape'][batch_index]
+            image_shape = batch_dict['image_shape'][batch_index].cpu().numpy()
             pred_boxes_camera = box_utils.boxes3d_lidar_to_kitti_camera(pred_boxes, calib)
             pred_boxes_img = box_utils.boxes3d_kitti_camera_to_imageboxes(
                 pred_boxes_camera, calib, image_shape=image_shape

@@ -29,7 +29,7 @@ class Balancer(nn.Module):
             tb_dict [dict[float]]: All losses to log in tensorboard
         """
         # Compute masks
-        fg_mask = loss_utils.compute_fg_mask(gt_boxes_2d=gt_boxes_2d,
+        fg_mask = loss_utils.compute_fg_mask(gt_boxes2d=gt_boxes2d,
                                              shape=loss.shape,
                                              downsample_factor=self.downsample_factor,
                                              device=loss.device)
