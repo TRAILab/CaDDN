@@ -23,11 +23,13 @@ class Conv2DCollapse(nn.Module):
 
     def forward(self, batch_dict):
         """
-        Collapses voxel features to BEV through 3D Convolution
+        Collapses voxel features to BEV via concatenation and channel reduction
         Args:
-            voxel_features [torch.Tensor(B, C, Z, Y, X)]: Voxel feature representation
+            batch_dict:
+                voxel_features [torch.Tensor(B, C, Z, Y, X)]: Voxel feature representation
         Returns:
-            bev_features [torch.Tensor(B, C, Y, X)]: BEV feature representation
+            batch_dict:
+                spatial_features [torch.Tensor(B, C, Y, X)]: BEV feature representation
         """
         voxel_features = batch_dict["voxel_features"]
         bev_features = voxel_features.flatten(start_dim=1, end_dim=2)  # (B, C, Z, Y, X) -> (B, C*Z, Y, X)

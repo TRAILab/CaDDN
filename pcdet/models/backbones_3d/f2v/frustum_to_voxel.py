@@ -30,12 +30,14 @@ class FrustumToVoxel(nn.Module):
         """
         Generates voxel features via 3D transformation and sampling
         Args:
-            frustum_features [torch.Tensor(B, C, D, H_image, W_image)]: Image frustum features
-            lidar_to_cam [torch.Tensor(B, 4, 4)]: LiDAR to camera frame transformation
-            cam_to_img [torch.Tensor(B, 3, 4)]: Camera projection matrix
-            image_shape [torch.Tensor(B, 2)]: Image shape [H, W]
+            batch_dict:
+                frustum_features [torch.Tensor(B, C, D, H_image, W_image)]: Image frustum features
+                lidar_to_cam [torch.Tensor(B, 4, 4)]: LiDAR to camera frame transformation
+                cam_to_img [torch.Tensor(B, 3, 4)]: Camera projection matrix
+                image_shape [torch.Tensor(B, 2)]: Image shape [H, W]
         Returns:
-            voxel_features [torch.Tensor(B, C, Z, Y, X)]: Image voxel features
+            batch_dict:
+                voxel_features [torch.Tensor(B, C, Z, Y, X)]: Image voxel features
         """
         # Generate sampling grid for frustum volume
         grid = self.grid_generator(lidar_to_cam=batch_dict["trans_lidar_to_cam"],

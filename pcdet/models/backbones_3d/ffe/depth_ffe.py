@@ -40,10 +40,11 @@ class DepthFFE(nn.Module):
         """
         Predicts depths and creates image depth feature volume using depth classification scores
         Args:
-            batch_dict [EasyDict]: Batch dictionary
+            batch_dict:
                 images [torch.Tensor(N, 3, H_in, W_in)]: Input images
         Returns:
-            frustum_features [torch.Tensor(N, C, D, H_out, W_out)]: Image depth features
+            batch_dict:
+                frustum_features [torch.Tensor(N, C, D, H_out, W_out)]: Image depth features
         """
         # Pixel-wise depth classification
         images = batch_dict["images"]
