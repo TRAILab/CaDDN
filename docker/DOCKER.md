@@ -1,7 +1,7 @@
 # Docker
 
 ## Setup
-To use CaDDN in docker please make sure you have `nvidia-docker` installed.
+Make sure you have `nvidia-docker` installed.
 ```shell
 # Add the package repositories
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
