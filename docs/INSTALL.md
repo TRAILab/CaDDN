@@ -26,3 +26,6 @@ c. Install this `pcdet` library by running the following command:
 ```shell
 python setup.py develop
 ```
+
+### Docker
+Additionally, we provide a docker image for this project. Please refer to [DOCKER.md](docker/DOCKER.md) for information on how to use the docker image.
