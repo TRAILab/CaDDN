@@ -48,7 +48,7 @@ Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usag
 
 ## Acknowledgement
 `CaDDN` is an open source project for monocular-based 3D scene perception.
-We would like to thank the authors of [OpenPCDet](https://github.com/open-mmlab/OpenPCDet) for their open-source release of their 3D object detection codebase.
+We would like to thank the authors of [`OpenPCDet`](https://github.com/open-mmlab/OpenPCDet) for their open-source release of their 3D object detection codebase.
 
 
 ## Citation
