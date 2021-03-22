@@ -78,4 +78,4 @@ WORKDIR /CaDDN
 COPY pcdet pcdet
 COPY setup.py setup.py
 RUN python setup.py develop
-RUN mkdir checkpoints && mkdir data && mkdir output && && mkdir tools
+RUN mkdir checkpoints && mkdir data && mkdir output && mkdir tools
