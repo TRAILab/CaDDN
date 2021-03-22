@@ -2,7 +2,7 @@
 
 ## Setup
 To use CaDDN in docker please make sure you have `nvidia-docker` installed.
-```
+```shell
 # Add the package repositories
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
@@ -12,7 +12,7 @@ sudo systemctl restart docker
 ```
 
 Install `nvidia-container-runtime`
-```
+```shell
 sudo apt install nvidia-container-runtime
 ```
 
@@ -30,8 +30,13 @@ Edit/create `/etc/docker/daemon.json` with:
 ```
 
 Restart docker daemon
-```
+```shell
 sudo systemctl restart docker
+```
+
+Navigate to `docker` directory
+```shell
+cd docker
 ```
 
 ## Get a Docker Image
