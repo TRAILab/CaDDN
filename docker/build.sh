@@ -1,7 +1,7 @@
 #!/bin/sh
 
 docker build \
-    -t 3dtrack \
+    -t caddn \
     -f Dockerfile \
     ..
 
