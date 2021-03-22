@@ -1,3 +1,7 @@
+"""
+This file has been modified by Cody Reading to add support for images, depth maps, and 2D GT boxes
+"""
+
 from collections import defaultdict
 from pathlib import Path
 

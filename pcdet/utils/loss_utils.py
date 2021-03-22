@@ -1,3 +1,8 @@
+"""
+This file has been modified by Cody Reading to add a function to compute the foreground mask for images
+based on 2D GT boxes
+"""
+
 import numpy as np
 import torch
 import torch.nn as nn

@@ -1,3 +1,7 @@
+"""
+This file has been modified by Cody Reading to add image data augmentation
+"""
+
 from functools import partial
 
 import numpy as np

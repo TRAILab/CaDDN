@@ -1,3 +1,8 @@
+"""
+This file has been modified by Cody Reading to add a function to query the voxel grid size and
+to mask the point cloud only if point cloud is used
+"""
+
 from functools import partial
 
 import numpy as np

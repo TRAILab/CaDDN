@@ -1,3 +1,7 @@
+"""
+This file has been modified by Cody Reading to add the CaDDN detector
+"""
+
 from .detector3d_template import Detector3DTemplate
 from .point_rcnn import PointRCNN
 from .pointpillar import PointPillar

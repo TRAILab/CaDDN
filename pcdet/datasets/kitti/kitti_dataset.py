@@ -1,3 +1,7 @@
+"""
+This file has been modified by Cody Reading to add support for images, depth maps, 2D GT boxes, and calibration matricies
+"""
+
 import copy
 import pickle
 
