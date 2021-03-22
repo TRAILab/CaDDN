@@ -1,3 +1,8 @@
+"""
+This file has been modified by Cody Reading to add new modules for the CaDDN detector:
+Frustum Feature Extractor (FFE) and Frustum to Voxel Transformation (f2v).
+"""
+
 import os
 
 import torch

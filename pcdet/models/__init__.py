@@ -1,3 +1,7 @@
+"""
+This file has been modified by Cody Reading to add support for images
+"""
+
 from collections import namedtuple
 
 import numpy as np
