@@ -4,7 +4,7 @@
 # python        3.8    (apt)
 # pytorch       1.4.0  (pip)
 # ==================================================================
-FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
 
 RUN rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
