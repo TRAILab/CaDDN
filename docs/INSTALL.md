@@ -2,9 +2,9 @@
 
 ### Requirements
 All the codes are tested in the following environment:
-* Linux (tested on Ubuntu 20.04)
+* Linux (tested on Ubuntu 18.04/20.04)
 * Python 3.8
-* PyTorch 1.7.1
+* PyTorch 1.4.0
 * CUDA 10.2
 
 ### Install `pcdet v0.3`
@@ -28,4 +28,4 @@ python setup.py develop
 ```
 
 ### Docker
-Additionally, we provide a docker image for this project. Please refer to [DOCKER.md](docker/DOCKER.md) for information on how to use the docker image.
+Additionally, we provide a docker image for this project. Please refer to [DOCKER.md](../docker/DOCKER.md) for information on how to use the docker image.
