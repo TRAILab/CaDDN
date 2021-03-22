@@ -50,7 +50,6 @@ RUN python -m pip --no-cache-dir install --upgrade -r requirements.txt
 # Environment
 # ------------------------------------------------------------------
 # setup environment
-RUN echo "export LD_LIBRARY_PATH=/usr/local/lib/python3.8/dist-packages/spconv:$LD_LIBRARY_PATH" >> /root/.bashrc
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
