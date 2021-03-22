@@ -42,7 +42,7 @@ cd docker
 ## Get a Docker Image
 In order to download the docker image:
 ```
-docker pull codyreading/CaDDN
+docker pull codyreading/caddn
 ```
 
 Alternatively, you can build it yourself:
