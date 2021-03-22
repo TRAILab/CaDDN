@@ -2,7 +2,7 @@
 
 # CaDDN
 
-`CaDDN` is a monocular-based 3D object detection method. This repository is heavily based off of [`[OpenPCDet]`](https://github.com/open-mmlab/OpenPCDet).
+`CaDDN` is a monocular-based 3D object detection method. This repository is based off of [`[OpenPCDet]`](https://github.com/open-mmlab/OpenPCDet).
 
 **Categorical Depth Distribution Network for Monocular 3D Object Detection**\
 Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
