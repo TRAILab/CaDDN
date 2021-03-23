@@ -23,15 +23,13 @@ Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
 ## Model Zoo
 
 ### KITTI 3D Object Detection Baselines
-Selected supported methods are shown in the below table. The results are the 3D detection performance of moderate difficulty on the *val* set of KITTI dataset.
-* All models are trained with 8 GTX 1080Ti GPUs and are available for download.
-* The training time is measured with 8 TITAN XP GPUs and PyTorch 1.5.
+Selected supported methods are shown in the below table. The results are the 3D detection performance of Car class on the *val* set of KITTI dataset.
+* All models are trained with 2 Tesla T4 GPUs and are available for download.
+* The training time is measured with 2 Tesla T4 GPUs and PyTorch 1.4.
 
-|                                             | training time | Car@R11 | Pedestrian@R11 | Cyclist@R11  | download |
+|                                             | training time | Easy@R40 | Moderate@R11 | Hard@R11  | download |
 |---------------------------------------------|----------:|:-------:|:-------:|:-------:|:---------:|
-| [PointPillar](tools/cfgs/kitti_models/pointpillar.yaml) |~1.2 hours| 77.28 | 52.29 | 62.68 | [model-18M](https://drive.google.com/file/d/1wMxWTpU1qUoY3DsCH31WJmvJxcjFXKlm/view?usp=sharing) |
-
-% TO DO: Change metrics to CaDDN
+| [CaDDN](tools/cfgs/kitti_models/CaDDN.yaml) |~76 hours| 23.77 | 16.07 | 13.61 | [model-811M](https://drive.google.com/file/d/1wMxWTpU1qUoY3DsCH31WJmvJxcjFXKlm/view?usp=sharing) |
 
 ## Installation
 
