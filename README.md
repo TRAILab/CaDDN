@@ -17,7 +17,7 @@ Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
 - [Citation](#citation)
 
 
-## Introduction
+## Changelog
 [2021-03-16] `CaDDN` v0.3.0 is released.
 
 ## Model Zoo
