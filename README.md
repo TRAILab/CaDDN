@@ -26,7 +26,7 @@ Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
 ### What does `CaDDN` do?
 
 `CaDDN` is a general PyTorch-based method for 3D object detection from monocular images.
-At the time of submission, `CaDDN` achieved first 1st place among published Monocular methods on the [Kitti 3D Object Detection Benchmark](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d). We welcome any contributions to this project.
+At the time of submission, `CaDDN` achieved first 1st place among published monocular methods on the [Kitti 3D object detection benchmark](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d). We welcome any contributions to this project.
 
 ### `CaDDN` design pattern
 We inherit the design pattern from [`[OpenPCDet]`](https://github.com/open-mmlab/OpenPCDet).
