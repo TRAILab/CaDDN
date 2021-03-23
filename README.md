@@ -29,7 +29,7 @@ Selected supported methods are shown in the below table. The results are the 3D 
 
 |                                             | training time | Easy@R40 | Moderate@R11 | Hard@R11  | download |
 |---------------------------------------------|----------:|:-------:|:-------:|:-------:|:---------:|
-| [CaDDN](tools/cfgs/kitti_models/CaDDN.yaml) |~76 hours| 23.77 | 16.07 | 13.61 | [model-811M](https://drive.google.com/file/d/1wMxWTpU1qUoY3DsCH31WJmvJxcjFXKlm/view?usp=sharing) |
+| [CaDDN](tools/cfgs/kitti_models/CaDDN.yaml) |~76 hours| 23.77 | 16.07 | 13.61 | [model-811M](https://drive.google.com/file/d/13HGW3_zCTKHGVtr_JDHD4Wv64PP5Z2mG/view?usp=sharing) |
 
 ## Installation
 
