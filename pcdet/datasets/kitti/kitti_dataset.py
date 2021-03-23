@@ -75,7 +75,7 @@ class KittiDataset(DatasetTemplate):
         Args:
             idx [int]: Index of the image sample
         Returns:
-            image [np.ndarray]: RGB Image
+            image [np.ndarray(H, W, 3)]: RGB Image
         """
         img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
         assert img_file.exists()
@@ -296,7 +296,7 @@ class KittiDataset(DatasetTemplate):
         if "DEPTH_MAP" in self.dataset_cfg and self.dataset_cfg.DEPTH_MAP.ENABLED:
             data_dict['depth_maps'] = self.get_depth_map(data_dict["frame_id"])
 
-        # Depth Map
+        # Calibration matricies
         if "CALIB" in self.dataset_cfg and self.dataset_cfg.CALIB.ENABLED:
             # Convert calibration matrices to homogeneous format and combine
             calib = data_dict["calib"]
