@@ -20,6 +20,24 @@ Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
 ## Changelog
 [2021-03-16] `CaDDN` v0.3.0 is released.
 
+## Introduction
+
+
+### What does `CaDDN` do?
+
+`CaDDN` is a general PyTorch-based method for 3D object detection from monocular images.
+At the time of submission, `CaDDN` achieved first 1st place among published monocular methods on the [Kitti 3D object detection benchmark](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d). We welcome contributions to this project.
+
+### `CaDDN` design pattern
+We inherit the design pattern from [`[OpenPCDet]`](https://github.com/open-mmlab/OpenPCDet).
+
+* Data-Model separation with unified point cloud coordinate for easily extending to custom datasets:
+<p align="center">
+  <img src="docs/dataset_vs_model.png" width="95%" height="320">
+</p>
+
+* Unified 3D box definition: (x, y, z, dx, dy, dz, heading).
+
 ## Model Zoo
 
 ### KITTI 3D Object Detection Baselines
