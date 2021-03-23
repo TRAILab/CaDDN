@@ -18,7 +18,7 @@ Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
 
 
 ## Introduction
-[2021-03-16] `CaDDN` v0.1.0 is released.
+[2021-03-16] `CaDDN` v0.3.0 is released.
 
 ## Model Zoo
 
@@ -50,7 +50,7 @@ We would like to thank the authors of [`OpenPCDet`](https://github.com/open-mmla
 
 
 ## Citation
-If you find this project useful in your research, please consider cite:
+If you find this project useful in your research, please consider citing:
 ```
 @article{CaDDN,
     title={Categorical Depth DistributionNetwork for Monocular 3D Object Detection},
