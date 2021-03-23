@@ -1,3 +1,8 @@
+"""
+This file has been modified by Cody Reading to add a function to query the voxel grid size and
+to mask the point cloud only if point cloud is used
+"""
+
 from functools import partial
 
 import numpy as np
@@ -11,6 +16,7 @@ class DataProcessor(object):
         self.training = training
         self.mode = 'train' if training else 'test'
         self.grid_size = self.voxel_size = None
+
         self.data_processor_queue = []
         for cur_cfg in processor_configs:
             cur_processor = getattr(self, cur_cfg.NAME)(config=cur_cfg)
@@ -19,8 +25,11 @@ class DataProcessor(object):
     def mask_points_and_boxes_outside_range(self, data_dict=None, config=None):
         if data_dict is None:
             return partial(self.mask_points_and_boxes_outside_range, config=config)
-        mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
-        data_dict['points'] = data_dict['points'][mask]
+
+        if data_dict.get('points', None) is not None:
+            mask = common_utils.mask_points_by_range(data_dict['points'], self.point_cloud_range)
+            data_dict['points'] = data_dict['points'][mask]
+
         if data_dict.get('gt_boxes', None) is not None and config.REMOVE_OUTSIDE_BOXES and self.training:
             mask = box_utils.mask_boxes_outside_range_numpy(
                 data_dict['gt_boxes'], self.point_cloud_range, min_num_corners=config.get('min_num_corners', 1)
@@ -94,7 +103,7 @@ class DataProcessor(object):
                 near_idxs_choice = np.random.choice(near_idxs, num_points - len(far_idxs_choice), replace=False)
                 choice = np.concatenate((near_idxs_choice, far_idxs_choice), axis=0) \
                     if len(far_idxs_choice) > 0 else near_idxs_choice
-            else: 
+            else:
                 choice = np.arange(0, len(points), dtype=np.int32)
                 choice = np.random.choice(choice, num_points, replace=False)
             np.random.shuffle(choice)
@@ -106,6 +115,15 @@ class DataProcessor(object):
             np.random.shuffle(choice)
         data_dict['points'] = points[choice]
         return data_dict
+
+    def calculate_grid_size(self, data_dict=None, config=None):
+        if data_dict is None:
+            grid_size = (self.point_cloud_range[3:6] - self.point_cloud_range[0:3]) / np.array(config.VOXEL_SIZE)
+            self.grid_size = np.round(grid_size).astype(np.int64)
+            self.voxel_size = config.VOXEL_SIZE
+            return partial(self.calculate_grid_size, config=config)
+        else:
+            return data_dict
 
     def forward(self, data_dict):
         """

@@ -1,3 +1,7 @@
+"""
+This file has been modified by Cody Reading to add the `get_pad_params` function
+"""
+
 import logging
 import os
 import pickle
@@ -58,7 +62,7 @@ def rotate_points_along_z(points, angle):
 
 def mask_points_by_range(points, limit_range):
     mask = (points[:, 0] >= limit_range[0]) & (points[:, 0] <= limit_range[3]) \
-           & (points[:, 1] >= limit_range[1]) & (points[:, 1] <= limit_range[4])
+        & (points[:, 1] >= limit_range[1]) & (points[:, 1] <= limit_range[4])
     return mask
 
 
@@ -103,6 +107,24 @@ def set_random_seed(seed):
     torch.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+
+
+def get_pad_params(desired_size, cur_size):
+    """
+    Get padding parameters for np.pad function
+    Args:
+        desired_size [int]: Desired padded output size
+        cur_size [int]: Current size. Should always be less than or equal to cur_size
+    Returns:
+        pad_params [tuple(int)]: Number of values padded to the edges (before, after)
+    """
+    assert desired_size >= cur_size
+
+    # Calculate amount to pad
+    diff = desired_size - cur_size
+    pad_params = (0, diff)
+
+    return pad_params
 
 
 def keep_arrays_by_name(gt_names, used_classes):
