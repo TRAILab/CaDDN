@@ -45,7 +45,7 @@ Selected supported methods are shown in the below table. The results are the 3D 
 * All models are trained with 2 Tesla T4 GPUs and are available for download.
 * The training time is measured with 2 Tesla T4 GPUs and PyTorch 1.4.
 
-|                                             | training time | Easy@R40 | Moderate@R11 | Hard@R11  | download |
+|                                             | training time | Easy@R40 | Moderate@R40 | Hard@R40  | download |
 |---------------------------------------------|----------:|:-------:|:-------:|:-------:|:---------:|
 | [CaDDN](tools/cfgs/kitti_models/CaDDN.yaml) |~76 hours| 23.77 | 16.07 | 13.61 | [model-774M](https://drive.google.com/file/d/13HGW3_zCTKHGVtr_JDHD4Wv64PP5Z2mG/view?usp=sharing) |
 
