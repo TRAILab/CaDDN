@@ -40,7 +40,10 @@ class DatasetTemplate(torch_data.Dataset):
 
         self.grid_size = self.data_processor.grid_size
         self.voxel_size = self.data_processor.voxel_size
-        self.depth_downsample_factor = self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR
+
+        if "DEPTH_MAP" in self.dataset_cfg:
+            self.depth_downsample_factor = self.dataset_cfg.DEPTH_MAP.DOWNSAMPLE_FACTOR
+
         self.total_epochs = 0
         self._merge_all_iters_to_one_epoch = False
 
