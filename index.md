@@ -24,6 +24,6 @@ CVPR 2021 (Oral)\
 ```
 ---
 ## Affiliations
-<img src="Images/UofT.svg" align="left" width="230" />
-<img src="Images/trailab.svg" align="right" width="200" />
+[<img src="Images/UofT.png" align="left" width="210" />](https://robotics.utoronto.ca/)
+[<img src="Images/trailab.svg" align="right" width="200" />](https://www.trailab.utias.utoronto.ca/)
 <hr style="height:60px; visibility:hidden;" />
