@@ -1,2 +1,10 @@
-.sass-cache
 _site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
+404.html
+_posts/
+about.markdown
+index.markdown
+
