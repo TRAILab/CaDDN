@@ -1,4 +1,4 @@
-<img src="Images/trailab.png" align="right" width="20%">
+<img src="Images/trailab.svg" align="right" width="20%">
 
 # Description
 
@@ -7,8 +7,8 @@ CaDDN is a monocular 3D object detection pipeline that estimates a categorical d
 # Paper
 **Categorical Depth Distribution Network for Monocular 3D Object Detection**\
 Cody Reading, Ali Harakeh, Julia Chae, and Steven L. Waslander\
-CVPR 2021 (Oral)
-[[arXiv](https://arxiv.org/abs/2103.01100)][[bibtex](https://arxiv.org/abs/2103.01100)]
+CVPR 2021 (Oral)\
+[[arXiv](https://arxiv.org/abs/2103.01100)]
 ```
 @article{CaDDN,
     title={Categorical Depth DistributionNetwork for Monocular 3D Object Detection},
