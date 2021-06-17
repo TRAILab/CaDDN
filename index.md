@@ -27,9 +27,44 @@ CVPR 2021 (Oral)
 
 ---
 ## Problem
+The main problem in monocular 3D detection is due to the depth information loss when 3D scene information is projected onto the image plane. Without depth, accurately locating 3D objects is challenging.
+<p style="text-align:center;">
+    <img src="Figures/Problem.svg" width="600"/>
+</p>
+
+Many monocular methods attempt to recover the lost depth in order to project the pixels back into 3D space. We categorize these into the **Too Big** and **Too Small** approaches.
+
+### Too Big
+These approaches project each image to all possible depths, and allow the detection network to learn which projected image pixel locations are the most relevant.
+<p style="text-align:center;">
+    <img src="Figures/Too_Big.svg" width="600"/>
+</p>
+Methods here tend to suffer from smearing effects, wherein similar image information can exist at
+multiple locations in the projected space. Smearing
+increases the difficulty of localizing objects in the scene.
+
+### Too Small
+These approaches learn a single depth value for each pixel, and project the pixel to a single depth in 3D space.
+<p style="text-align:center;">
+    <img src="Figures/Too_Small.svg" width="600"/>
+</p>
+This solution would be ideal with perfect depth information. The issue is that monocular depth estimation can be inaccurate, particulary at long range. All projected image pixels are treated equally regardless of depth estimation uncertainty, resulting in poor localization where depth estimates are inaccurate.
 
 ---
 ## Our Solution
+Our solution takes a **Just Right** approach. We project pixels to all possible depths and weigh the projection by estimated depth probabilities. The weighted projection allows CaDDN to place image information at the correct locations while encoding depth estimation uncertainty.
+<p style="text-align:center;">
+    <img src="Figures/Just_Right.svg" width="600"/>
+</p>
+Specfically, CaDDN estimates categorical depth distributions for each pixel, that contain probabilities that each pixel belongs to a set of discrete depth bins. This can be thought of as performing pixel-wise classification between depth bins, where the classification probabilities are then used as multplicative weights during projection.
+
+The full architecture of CaDDN is shown here:
+<p style="text-align:center;">
+    <img src="Figures/CaDDN_Architecture.svg" />
+</p>
+<img src="Figures/Frustum.svg" align="left" width="400" />
+<img src="Figures/Frustum_to_Voxel.svg" align="right" width="400" />
+<hr style="height:200px; visibility:hidden;" />
 
 ---
 ## Results
