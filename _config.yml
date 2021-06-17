@@ -18,9 +18,11 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: CaDDN
+title: Categorical Depth Distribution Network for Monocular 3D Object Detection
 email: cody.reading@mail.utoronto.ca
-description: Categorical Depth Distribution Network for Monocular 3D Object Detection
+description: |
+  Cody Reading, Ali Harakeh, Julia Chae, Steven L. Waslander.
+  CVPR 2021 (Oral)
 twitter_username: code_red7777
 github_username:  codyreading
 
