@@ -89,6 +89,17 @@ The voxel grid **V** is collapsed into a BEV grid **B**. The height axis of **V*
 
 ---
 ## Results
+CaDDN achieve state-of-the-art performance on both the KITTI and Waymo datasets.
+
+<p style="text-align:center;">
+    <img src="Tables/kitti.png" width="600"/>
+</p>
+We show the 3D detection results on the KITTI test set, using the AP|R40 metric. We indicate the highest result with red and the second highest with blue. Full results for CaDDN be accessed [here](http://www.cvlibs.net/datasets/kitti/eval_object_detail.php?&result=d593e0abe5e5f8b0a0ea1523816e7851b0266cd8).
+
+<p style="text-align:center;">
+    <img src="Tables/waymo.png" width="600"/>
+</p>
+We also show the 3D detection results on the Waymo validation set on the Vehicle class. We evaluate M3D-RPM as a baseline for comparison.
 
 ---
 ## Affiliations
