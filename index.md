@@ -89,17 +89,39 @@ The voxel grid **V** is collapsed into a BEV grid **B**. The height axis of **V*
 
 ---
 ## Results
+### 3D Detection Peformance
 CaDDN achieve state-of-the-art performance on both the KITTI and Waymo datasets.
 
 <p style="text-align:center;">
-    <img src="Tables/kitti.png" width="600"/>
+    <img src="Tables/kitti.png" />
 </p>
 We show the 3D detection results on the KITTI test set, using the AP|R40 metric. We indicate the highest result with red and the second highest with blue. Full results for CaDDN be accessed [here](http://www.cvlibs.net/datasets/kitti/eval_object_detail.php?&result=d593e0abe5e5f8b0a0ea1523816e7851b0266cd8).
 
 <p style="text-align:center;">
-    <img src="Tables/waymo.png" width="600"/>
+    <img src="Tables/waymo.png" />
 </p>
 We also show the 3D detection results on the Waymo validation set on the Vehicle class. We evaluate M3D-RPM as a baseline for comparison.
+
+### Visualizations
+We can also visualize the various representations produced from our network.
+<p style="text-align:center;">
+    <img src="Visualizations/results.gif" />
+</p>
+We can see the 3D detections on both the image and the LiDAR point cloud. We also visuialize the depth estimation results, where brighter colours indicate closer depths. We can visualize the BEV features in which objects can be accurately located.
+
+### Image Projection to 3D
+We also compare the three approaches both by looking at detection peformance and by visualizing the BEV feature representation.
+<p style="text-align:center;">
+    <img src="Visualizations/projection.gif" />
+</p>
+This validates the use of our just right approach, as it places image information in the correct 3D locations while encoding depth estimation uncertainty.
+
+### Depth Distribution Uncertainty
+Finally, we visualize the estimated depth distributions at each depth bin.
+<p style="text-align:center;">
+    <img src="Visualizations/distributions.gif" />
+</p>
+The depth distributions are shown by representing higher probabilties with brighter colours. The average depth distributions are also plotted for each depth bin. We observe that distributions become wider and shorter as a function of depth, which reflects the increased difficulty of depth estimation at long range.
 
 ---
 ## Affiliations
