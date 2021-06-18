@@ -76,11 +76,16 @@ To generate frustum features **G**, image features **F** and depth distributions
 
 
 ### Frustum to Voxel Transformation
-The frustum features
-**G** are transformed to a voxel representation **V**, leveraging known camera calibration and differentiable sampling. Sampling points in each voxel in **V** are projected into the frustum grid. Frustum features are sampled using trilinear interpolation (shown as blue in **G**) to populate voxels in **V**.
+The frustum features **G** are transformed to a voxel representation **V**, leveraging known camera calibration and differentiable sampling. Sampling points in each voxel in **V** are projected into the frustum grid using the camera calibration matrix. Frustum features are sampled using trilinear interpolation (shown as blue in **G**) to populate voxels in **V**.
 <p style="text-align:center;">
     <img src="Figures/Frustum_to_Voxel.svg" width="600"/>
 </p>
+
+### Voxel Collapse
+The voxel grid **V** is collapsed into a BEV grid **B**. The height axis of **V** is concatenated along the channel axis, followed by a channel reduction layer with 1x1 convolutions to retrieve the original number of feature channels. The voxel collapse module acts as a learned collapse module to generate the BEV grid **B**.
+
+### 3D Object Detector
+3D object detection is performed using a BEV detection network. Specifically, the backbone and detection head from PointPillars are used to generate the bounding box estimations.
 
 ---
 ## Results
