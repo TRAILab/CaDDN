@@ -58,6 +58,7 @@ Our solution takes a **Just Right** approach. We project pixels to all possible 
 </p>
 Specfically, CaDDN estimates categorical depth distributions for each pixel, that contain probabilities that each pixel belongs to a set of discrete depth bins. This can be thought of as performing pixel-wise classification between depth bins, where the classification probabilities are then used as multplicative weights during projection.
 
+### Architecture
 The full architecture of CaDDN is shown here:
 <p style="text-align:center;">
     <img src="Figures/CaDDN_Architecture.svg" />
@@ -67,13 +68,19 @@ The network is composed of three modules to generate 3D feature representations 
 detection. Frustum features **G** are generated from an image **I** using estimated depth distributions **D**, which are transformed into voxel
 features **V**. The voxel features are collapsed to bird’s-eye-view features **B** to be used for 3D object detection
 
+### Frustum Feature Network
 To generate frustum features **G**, image features **F** and depth distributions **D** are predicted in parallel using convolutional networks. These are combined via an outer product, which multiplies each feature pixel by its associated depth bin probabilities. By doing so, the image features are projcted into a 3D frustum grid.
 <p style="text-align:center;">
     <img src="Figures/Frustum.svg" width="600"/>
 </p>
 
-<img src="Figures/Frustum_to_Voxel.svg" align="right" width="400" />
-<hr style="height:200px; visibility:hidden;" />
+
+### Frustum to Voxel Transformation
+The frustum features
+**G** are transformed to a voxel representation **V**, leveraging known camera calibration and differentiable sampling. Sampling points in each voxel in **V** are projected into the frustum grid. Frustum features are sampled using trilinear interpolation (shown as blue in **G**) to populate voxels in **V**.
+<p style="text-align:center;">
+    <img src="Figures/Frustum_to_Voxel.svg" width="600"/>
+</p>
 
 ---
 ## Results
