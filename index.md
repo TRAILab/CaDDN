@@ -3,8 +3,8 @@
     src="Visualizations/CaDDN.gif" align="center">
 </p>
 
-CaDDN is a monocular 3D object detection pipeline that estimates a categorical depth distribution for each pixel to project image feature information to the appropiate depth interval in 3D space. We then use the bird’s-eye-view projection and single-stage detector to produce the final output detections.
-#### Highlights
+CaDDN is a monocular 3D object detection pipeline that estimates a categorical depth distribution for each pixel to project image feature information to the appropiate depth interval in 3D space. The bird’s-eye-view projection and single-stage detector are then used to produce the final output detections.
+### Highlights
 - 1<sup>st</sup> place on [KITTI 3D object detection benchmark](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d) (among published monocular methods upon time of submission)
 - 1<sup>st</sup> monocular method to report results on the [Waymo Open Dataset](https://waymo.com/open/)
 
@@ -27,7 +27,7 @@ CVPR 2021 (Oral)
 
 ---
 ## Problem
-The main problem in monocular 3D detection is due to the depth information loss when 3D scene information is projected onto the image plane. Without depth, accurately locating 3D objects is challenging.
+The main problem in monocular 3D detection is the depth information loss when 3D scene information is projected onto the image plane. Without depth, accurately locating 3D objects is challenging.
 <p style="text-align:center;">
     <img src="Figures/Problem.svg" width="600"/>
 </p>
@@ -59,7 +59,7 @@ Our solution takes a **Just Right** approach. We project pixels to all possible 
 Specfically, CaDDN estimates categorical depth distributions for each pixel, that contain probabilities that each pixel belongs to a set of discrete depth bins. This can be thought of as performing pixel-wise classification between depth bins, where the classification probabilities are then used as multplicative weights during projection.
 
 ### Architecture
-The full architecture of CaDDN is shown here:
+The full architecture of CaDDN is as follows:
 <p style="text-align:center;">
     <img src="Figures/CaDDN_Architecture.svg" />
 </p>
@@ -114,7 +114,8 @@ We also compare the three approaches both by looking at detection peformance and
 <p style="text-align:center;">
     <img src="Visualizations/projection.gif" />
 </p>
-This validates the use of our just right approach, as it places image information in the correct 3D locations while encoding depth estimation uncertainty.
+
+The **Too Big** approach results in smearing effects, which make accurate object localization challenging. The **Too Small** approach results in image features being placed in wrong locations where depth estimation is inaccurate. The **Just Right** approach allows for image information to be placed in the correct 3D locations while encoding depth estimation uncertainty.
 
 ### Depth Distribution Uncertainty
 Finally, we visualize the estimated depth distributions at each depth bin.
