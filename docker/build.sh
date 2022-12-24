@@ -1,7 +1,6 @@
 #!/bin/sh
 
 docker build \
-    -t caddn \
+    -t codyreading/caddn \
     -f Dockerfile \
     ..
-
