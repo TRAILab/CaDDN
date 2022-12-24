@@ -65,7 +65,7 @@ CMD="docker run -it \
     $DATA_VOLUMES \
     $PCDET_VOLUMES \
     --rm \
-    caddn bash
+    codyreading/caddn bash
 "
 echo $CMD
 eval $CMD
