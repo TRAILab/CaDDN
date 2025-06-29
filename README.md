@@ -47,7 +47,7 @@ Selected supported methods are shown in the below table. The results are the 3D 
 
 |                                             | training time | Easy@R40 | Moderate@R40 | Hard@R40  | download |
 |---------------------------------------------|----------:|:-------:|:-------:|:-------:|:---------:|
-| [CaDDN](tools/cfgs/kitti_models/CaDDN.yaml) |~76 hours| 23.77 | 16.07 | 13.61 | [model-774M](https://drive.google.com/file/d/13HGW3_zCTKHGVtr_JDHD4Wv64PP5Z2mG/view?usp=sharing) |
+| [CaDDN](tools/cfgs/kitti_models/CaDDN.yaml) |~76 hours| 23.77 | 16.07 | 13.61 | [model-774M](https://www.icloud.com/iclouddrive/06fi0qWI-_saR6sw00X0oXNSQ#caddn) |
 
 ## Installation
 
@@ -84,5 +84,3 @@ If you find this project useful in your research, please consider citing:
 
 ## Contribution
 Welcome to be a member of the CaDDN development team by contributing to this repo, and feel free to contact us for any potential contributions.
-
-
